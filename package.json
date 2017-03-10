@@ -1,0 +1,38 @@
+{
+  "name": "kasd",
+  "version": "1.0.0",
+  "description": "test for 4xxi",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuliko111/CENTRALLO.git"
+  },
+  "author": "Yulia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yuliko111/CENTRALLO/issues"
+  },
+  "homepage": "https://github.com/yuliko111/CENTRALLO#readme",
+  "devDependencies": {
+    "autoprefixer": "^6.7.2",
+    "browser-sync": "^2.18.7",
+    "cssnano": "^3.10.0",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-imagemin": "^3.1.1",
+    "gulp-include": "^2.3.1",
+    "gulp-postcss": "^6.3.0",
+    "gulp-run-sequence": "^0.3.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-sass-lint": "^1.3.2",
+    "gulp-sourcemaps": "^2.4.1",
+    "gulp-svg-symbols": "^2.0.2",
+    "gulp-uglify": "^2.0.1",
+    "gulp-watch": "^4.3.11",
+    "imagemin-pngquant": "^5.0.0"
+  }
+}

@@ -1,0 +1,40 @@
+@import 'vars';
+
+$mobile-width: 768px;
+$desktop-width: 1200px;
+
+@mixin container() {
+  margin: 0 auto;
+
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  @media (max-width: $mobile-width - 1) { //от 320 до 767
+    $padding: 16px;
+    $margin: 12px;
+
+    width: calc(100% - #{$padding} * 2 - #{$margin} * 2); //56
+    max-width: 720px;
+    padding: 0 $padding;
+  }
+
+  @media screen and (min-width: $mobile-width) and (max-width: $desktop-width - 1) { //от 768 до 1199
+    $padding: 30px;
+    $margin: 24px;
+
+    width: calc(100% - #{$padding} * 2 - #{$margin} * 2); //108
+    max-width: 960px;
+    padding: 0 $padding;
+  }
+
+  @media (min-width: $desktop-width) { // от 1200
+    $padding: 30px;
+
+    width: 100%;
+    max-width: $desktop-width;
+    padding: 0 $padding;
+  }
+}

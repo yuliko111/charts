@@ -1,0 +1,161 @@
+@import 'mixins';
+
+$font-fam: Arial, Roboto, Helvetica Neue;
+$base-color: #494949;
+
+body {
+  font-family: $font-fam;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 1em;
+  color: #312d3b;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: $base-color;
+
+  &:hover {
+    color: $base-color;
+  }
+}
+
+ul, li {
+  list-style: none;
+}
+
+p {
+  font: 400 16px/26px $font-fam;
+  color: #494949;
+}
+
+.checkbox {
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__input {
+    vertical-align: top;
+    margin: 0 3px 0 0;
+    width: 14px;
+    height: 14px;
+
+    &:not(checked) {
+      position: absolute;
+      opacity: 0;
+    }
+
+    &:checked {
+
+    }
+  }
+  &__input + &__label {
+    position: relative;
+    padding: 0 0 0 30px;
+    cursor: pointer;
+    font: 500 16px/22px $font-fam;
+    color: #494949;
+  }
+  &__input:not(checked) + &__label {
+    position: relative;
+    padding: 0 0 0 23px;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 11px;
+      height: 11px;
+      border-radius: 2px;
+      background: #fff;
+      border: 2px solid #b8b8b8;
+    }
+  }
+  &__input:checked + &__label {
+    &:before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 1px;
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      background: #3b99fc;
+      border: 0;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: url(/img/svg/check.svg) no-repeat;
+    }
+  }
+
+}
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  border-radius: 3px;
+  padding: 6px 25px;
+  font: 400 13px/1em $font-fam;
+  cursor: pointer;
+
+  &_white {
+    background: #fff;
+    color: #00adff;
+  }
+  &_blue {
+    background: #37b7ec;
+    color: #fff;
+  }
+}
+
+.header {
+  background-color: #3c434a;
+
+  &__container {
+    @include container();
+    display: table;
+  }
+}
+
+.content {
+  min-height: 100vh;
+
+  &__container {
+    @include container();
+  }
+}
+
+.footer {
+  background-color: #3c434a;
+  padding: 26px 0;
+
+  &__container {
+    @include container();
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: $mobile-width - 1) {
+
+}
+
+@media screen and (min-width: $mobile-width) and (max-width: $desktop-width - 1) {
+
+}
+
+@media (min-width: $desktop-width) {
+
+}
