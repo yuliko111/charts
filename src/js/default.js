@@ -1,4 +1,4 @@
-	// import * as d3 from 'd3';
+// import * as d3 from 'd3';
 (function () {
 	var margin = {top: 20, right: 100, bottom: 30, left: 100},
 		width = 960 - margin.left - margin.right,
@@ -81,6 +81,14 @@
 		.attr("class", "tooltip")
 		.style("opacity", 0);
 
+	//  tooltipInner(x, y) {
+	// 	return `<div class="tooltip-inner">${x}<br/>${y}</div>`;
+	// };
+
+	// var tooltipInner = tooltip.append('div')
+	// 	.attr('class', 'tooltip-inner');
+
+
 	mainGradient.append('stop')
 		.attr('class', 'stop-left')
 		.attr('offset', '0');
@@ -107,25 +115,28 @@
 		.attr("fill", "#000")
 		.attr("d", line);
 
-	// console.log(d.x);
-
 	svg.selectAll("dot")
 		.data(dataset)
 		.enter().append("circle")
 		.attr("r", 5)
-		.attr("cx", function(d) { return xScale(d.x); })
-		.attr("cy", function(d) { return yScale(d.y); })
-		.on("mouseover", function(d) {
+		.attr("cx", function (d) {
+			return xScale(d.x);
+		})
+		.attr("cy", function (d) {
+			return yScale(d.y);
+		})
+		.on("mouseover", function (d) {
 			console.log('left', (d3.event.pageX));
 			console.log('top', (d3.event.pageY));
 			tooltip.transition()
 				.duration(200)
 				.style("opacity", .9);
 			tooltip.html(d.x + "<br/>"  + d.y)
+			// tooltip.html(tooltipInner(d.x, d.y))
 				.style("left", (d3.event.pageX) + "px")
 				.style("top", (d3.event.pageY - 28) + "px");
 		})
-		.on("mouseout", function(d) {
+		.on("mouseout", function (d) {
 			console.log('2 mouseout');
 			tooltip.transition()
 				.duration(500)
