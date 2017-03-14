@@ -61,14 +61,6 @@
 			return yScale(d.y);
 		});
 
-	var area = d3.svg.area()
-		.x(function (d) {
-			return x(d.date);
-		})
-		.y1(function (d) {
-			return y(d.close);
-		});
-
 	var svg = d3.select("body").append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
@@ -77,12 +69,17 @@
 
 
 	var svgDefs = svg.append('defs');
+
 	var mainGradient = svgDefs.append('linearGradient')
 		.attr('id', 'mainGradient')
 		.attr('x1', '0')
 		.attr('x2', '0')
 		.attr('y1', '0')
 		.attr('y2', '1');
+
+	var tooltip = d3.select("body").append("div")
+		.attr("class", "tooltip")
+		.style("opacity", 0);
 
 	mainGradient.append('stop')
 		.attr('class', 'stop-left')
@@ -109,6 +106,32 @@
 		.attr("class", "filled")
 		.attr("fill", "#000")
 		.attr("d", line);
+
+	// console.log(d.x);
+
+	svg.selectAll("dot")
+		.data(dataset)
+		.enter().append("circle")
+		.attr("r", 5)
+		.attr("cx", function(d) { return xScale(d.x); })
+		.attr("cy", function(d) { return yScale(d.y); })
+		.on("mouseover", function(d) {
+			console.log('left', (d3.event.pageX));
+			console.log('top', (d3.event.pageY));
+			tooltip.transition()
+				.duration(200)
+				.style("opacity", .9);
+			tooltip.html(d.x + "<br/>"  + d.y)
+				.style("left", (d3.event.pageX) + "px")
+				.style("top", (d3.event.pageY - 28) + "px");
+		})
+		.on("mouseout", function(d) {
+			console.log('2 mouseout');
+			tooltip.transition()
+				.duration(500)
+				.style("opacity", 0);
+		});
+
 
 })();
 
