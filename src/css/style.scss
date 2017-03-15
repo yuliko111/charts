@@ -42,7 +42,9 @@ p {
 	/*stroke: blue;*/
 	/*stroke-width: 2px;*/
 }
-
+.tick {
+	opacity: 1 !important;
+}
 .tick text {
 	font-size: 12px;
 }

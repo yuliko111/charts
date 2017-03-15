@@ -77,6 +77,11 @@
 		.attr('y1', '0')
 		.attr('y2', '1');
 
+	var zoom = d3.zoom()
+		.scaleExtent([1, 40])
+		.translateExtent([[-100, -100], [width + 90, height + 100]])
+		.on("zoom", zoomed);
+
 	var tooltip = d3.select("body").append("div")
 		.attr("class", "tooltip")
 		.style("opacity", 0);
@@ -113,7 +118,7 @@
 		} else if (eventX > svgRight) {
 			console.log('справа');
 			// set :before coord for tooltip
-			toLeft = svgRight - (halfTooltip)/2  + 6;
+			toLeft = svgRight - (halfTooltip) / 2 + 9;
 		} else {
 			console.log('в центре');
 			toLeft = eventX - halfTooltip - 6;
@@ -147,11 +152,12 @@
 	// 	.call(xAxis);
 
 	// горизонтальные линии сетки
-	svg.append("g")
+	var gY = svg.append("g")
 		.attr("class", "y axis")
 		.call(yAxis);
 
 	// график
+	// var view = svg.append("path")
 	svg.append("path")
 		.data([dataset])
 		.attr("class", "filled")
@@ -159,7 +165,6 @@
 		.attr("d", line);
 
 	svg.selectAll("dot")
-	// .data(dataset)
 		.data(dataset.filter(function (item) {
 			return !item.disabled;
 		}))
@@ -188,6 +193,20 @@
 				.duration(500)
 				.style("opacity", 0);
 		});
+
+	svg.call(zoom);
+	console.log('zoom', zoom);
+	function zoomed() {
+		svg.attr("transform", d3.event.transform);
+		// gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));	//to delete
+		// gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
+	}
+
+	function resetted() {
+		svg.transition()
+			.duration(750)
+			.call(zoom.transform, d3.zoomIdentity);
+	}
 
 })();
 
