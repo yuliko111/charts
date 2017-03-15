@@ -4,142 +4,151 @@ $font-fam: Roboto, Arial, Helvetica Neue;
 $base-color: #494949;
 
 body {
-	font-family: $font-fam;
-	font-weight: 300;
-	font-size: 18px;
-	line-height: 1em;
-	color: #312d3b;
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
+  font-family: $font-fam;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 1em;
+  color: #312d3b;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
-	text-decoration: none;
-	color: $base-color;
+  text-decoration: none;
+  color: $base-color;
 
-	&:hover {
-		color: $base-color;
-	}
+  &:hover {
+    color: $base-color;
+  }
 }
 
 ul, li {
-	list-style: none;
+  list-style: none;
 }
 
 p {
-	font: 400 16px/26px $font-fam;
-	color: #494949;
+  font: 400 16px/26px $font-fam;
+  color: #494949;
+}
+
+.content {
+  position: relative;
+  margin: 20px 100px;
+  width: 960px;
+  height: 500px;
 }
 
 .axis path,
 .axis line {
-	fill: none;
-	stroke: black;
+  fill: none;
+  stroke: black;
 }
 
 .line {
-	fill: blue;
-	/*stroke: blue;*/
-	/*stroke-width: 2px;*/
+  fill: blue;
+  /*stroke: blue;*/
+  /*stroke-width: 2px;*/
 }
+
 .tick {
-	opacity: 1 !important;
+
 }
+
 .tick text {
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .tick line {
-	opacity: 0.2;
+  opacity: 0.2;
 }
 
 .stop-left {
-	stop-color: #039be5; /* Indigo */
-	stop-opacity: 0.6;
+  stop-color: #039be5; /* Indigo */
+  stop-opacity: 0.6;
 }
 
 .stop-right {
-	stop-color: #039be5; /* Teal */
-	stop-opacity: 0;
+  stop-color: #039be5; /* Teal */
+  stop-opacity: 0;
 }
 
 .filled {
-	fill: url(#mainGradient);
+  fill: url(#mainGradient);
 }
 
 .outlined {
-	fill: none;
-	stroke: url(#mainGradient);
-	stroke-width: 4;
+  fill: none;
+  stroke: url(#mainGradient);
+  stroke-width: 4;
 }
 
 .tooltip {
-	max-width: 255px;
-	max-height: 400px;
+  max-width: 255px;
+  max-height: 400px;
 
-	position: absolute;
-	text-align: center;
-	padding: 16px 13px;
-	font: 12px sans-serif;
-	background: #323232;
-	border: 0;
-	border-radius: 2px;
-	opacity: 1 !important;
-	color: #fff;
-	box-sizing: border-box;
+  position: absolute;
+  text-align: center;
+  padding: 16px 13px;
+  font: 12px sans-serif;
+  background: #323232;
+  border: 0;
+  border-radius: 2px;
+  opacity: 1 !important;
+  color: #fff;
+  box-sizing: border-box;
 
-	&:before {
-		content: "";
-		display: block;
-		position: absolute;
-		bottom: -8px;
-		left: calc(50% - 6px);
-		right: calc(50% - 6px);
-		width: 0;
-		height: 0;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 8px solid #323232;
-	}
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -8px;
+    left: calc(50% - 6px);
+    right: calc(50% - 6px);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #323232;
+  }
 
-	&-inner {
-		text-align: left;
-	}
-	&_date {
-		font: 400 13px/16px $font-fam;
-		letter-spacing: 0.3px;
-		margin-bottom: 9px;
-	}
-	&_title {
-		font: 400 13px/16px $font-fam;
-		letter-spacing: 0.3px;
-		margin-bottom: 9px;
-	}
-	&_period {
-		font: 400 11px/16px $font-fam;
-		letter-spacing: 0.3px;
-		color: #999;
-		margin-bottom: 13px;
+  &-inner {
+    text-align: left;
+  }
+  &_date {
+    font: 400 13px/16px $font-fam;
+    letter-spacing: 0.3px;
+    margin-bottom: 9px;
+  }
+  &_title {
+    font: 400 13px/16px $font-fam;
+    letter-spacing: 0.3px;
+    margin-bottom: 9px;
+  }
+  &_period {
+    font: 400 11px/16px $font-fam;
+    letter-spacing: 0.3px;
+    color: #999;
+    margin-bottom: 13px;
 
-		&-label {
+    &-label {
 
-		}
-		&-value {
+    }
+    &-value {
 
-		}
-	}
-	&_time {
-		float: left;
-		font: 400 11px/16px $font-fam;
-		letter-spacing: 0.3px;
+    }
+  }
+  &_time {
+    float: left;
+    font: 400 11px/16px $font-fam;
+    letter-spacing: 0.3px;
 
-		border: 1px solid #fff;
-		border-radius: 8px;
-		padding: 0 7px;
-	}
-	&_balance {
-		float: right;
-		font: 400 14px/16px $font-fam;
-		letter-spacing: 0.4px;
-	}
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 0 7px;
+  }
+  &_balance {
+    float: right;
+    font: 400 14px/16px $font-fam;
+    letter-spacing: 0.4px;
+  }
 }
