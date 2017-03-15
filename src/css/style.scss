@@ -1,161 +1,142 @@
 @import 'mixins';
 
-$font-fam: Arial, Roboto, Helvetica Neue;
+$font-fam: Roboto, Arial, Helvetica Neue;
 $base-color: #494949;
 
 body {
-  font-family: $font-fam;
-  font-weight: 300;
-  font-size: 18px;
-  line-height: 1em;
-  color: #312d3b;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+	font-family: $font-fam;
+	font-weight: 300;
+	font-size: 18px;
+	line-height: 1em;
+	color: #312d3b;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
 }
 
 a {
-  text-decoration: none;
-  color: $base-color;
+	text-decoration: none;
+	color: $base-color;
 
-  &:hover {
-    color: $base-color;
-  }
+	&:hover {
+		color: $base-color;
+	}
 }
 
 ul, li {
-  list-style: none;
+	list-style: none;
 }
 
 p {
-  font: 400 16px/26px $font-fam;
-  color: #494949;
+	font: 400 16px/26px $font-fam;
+	color: #494949;
 }
 
-.checkbox {
-  margin-bottom: 12px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &__input {
-    vertical-align: top;
-    margin: 0 3px 0 0;
-    width: 14px;
-    height: 14px;
-
-    &:not(checked) {
-      position: absolute;
-      opacity: 0;
-    }
-
-    &:checked {
-
-    }
-  }
-  &__input + &__label {
-    position: relative;
-    padding: 0 0 0 30px;
-    cursor: pointer;
-    font: 500 16px/22px $font-fam;
-    color: #494949;
-  }
-  &__input:not(checked) + &__label {
-    position: relative;
-    padding: 0 0 0 23px;
-
-    &:before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 11px;
-      height: 11px;
-      border-radius: 2px;
-      background: #fff;
-      border: 2px solid #b8b8b8;
-    }
-  }
-  &__input:checked + &__label {
-    &:before {
-      content: "";
-      position: absolute;
-      top: 2px;
-      left: 1px;
-      width: 14px;
-      height: 14px;
-      border-radius: 2px;
-      background: #3b99fc;
-      border: 0;
-    }
-
-    &:after {
-      content: "";
-      position: absolute;
-      top: 4px;
-      left: 3px;
-      width: 14px;
-      height: 14px;
-      background: url(/img/svg/check.svg) no-repeat;
-    }
-  }
-
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
 }
 
-.btn {
-  display: inline-block;
-  text-align: center;
-  border-radius: 3px;
-  padding: 6px 25px;
-  font: 400 13px/1em $font-fam;
-  cursor: pointer;
-
-  &_white {
-    background: #fff;
-    color: #00adff;
-  }
-  &_blue {
-    background: #37b7ec;
-    color: #fff;
-  }
+.line {
+	fill: blue;
+	/*stroke: blue;*/
+	/*stroke-width: 2px;*/
 }
 
-.header {
-  background-color: #3c434a;
-
-  &__container {
-    @include container();
-    display: table;
-  }
+.tick text {
+	font-size: 12px;
 }
 
-.content {
-  min-height: 100vh;
-
-  &__container {
-    @include container();
-  }
+.tick line {
+	opacity: 0.2;
 }
 
-.footer {
-  background-color: #3c434a;
-  padding: 26px 0;
-
-  &__container {
-    @include container();
-    display: flex;
-    justify-content: space-between;
-  }
+.stop-left {
+	stop-color: #3f51b5; /* Indigo */
+	stop-opacity: 0.3;
 }
 
-@media (max-width: $mobile-width - 1) {
-
+.stop-right {
+	stop-color: #009688; /* Teal */
+	stop-opacity: 0.7;
 }
 
-@media screen and (min-width: $mobile-width) and (max-width: $desktop-width - 1) {
-
+.filled {
+	fill: url(#mainGradient);
 }
 
-@media (min-width: $desktop-width) {
+.outlined {
+	fill: none;
+	stroke: url(#mainGradient);
+	stroke-width: 4;
+}
 
+.tooltip {
+	max-width: 255px;
+	max-height: 400px;
+
+	position: absolute;
+	text-align: center;
+	padding: 16px 13px;
+	font: 12px sans-serif;
+	background: #323232;
+	border: 0;
+	border-radius: 2px;
+	opacity: 1 !important;
+	color: #fff;
+
+	&:before {
+		content: "";
+		display: block;
+		position: absolute;
+		bottom: -8px;
+		left: calc(50% - 6px);
+		right: calc(50% - 6px);
+		width: 0;
+		height: 0;
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-top: 8px solid #323232;
+	}
+
+	&-inner {
+		text-align: left;
+	}
+	&_date {
+		font: 400 13px/16px $font-fam;
+		letter-spacing: 0.3px;
+		margin-bottom: 9px;
+	}
+	&_title {
+		font: 400 13px/16px $font-fam;
+		letter-spacing: 0.3px;
+		margin-bottom: 9px;
+	}
+	&_period {
+		font: 400 11px/16px $font-fam;
+		letter-spacing: 0.3px;
+		color: #999;
+		margin-bottom: 13px;
+
+		&-label {
+
+		}
+		&-value {
+
+		}
+	}
+	&_time {
+		float: left;
+		font: 400 11px/16px $font-fam;
+		letter-spacing: 0.3px;
+
+		border: 1px solid #fff;
+		border-radius: 8px;
+		padding: 0 7px;
+	}
+	&_balance {
+		float: right;
+		font: 400 14px/16px $font-fam;
+		letter-spacing: 0.4px;
+	}
 }

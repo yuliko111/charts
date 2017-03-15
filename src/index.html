@@ -1,74 +1,28 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ru">
 <head>
-	<meta charset="UTF-8">
+	<meta content="utf-8" http-equiv="encoding">
 	<title>Line Chart</title>
-	<style>
-
-		.axis path,
-		.axis line {
-			fill: none;
-			stroke: black;
-		}
-
-		.line {
-			fill: blue;
-			/*stroke: blue;*/
-			/*stroke-width: 2px;*/
-		}
-
-		.tick text {
-			font-size: 12px;
-		}
-
-		.tick line {
-			opacity: 0.2;
-		}
-
-        .stop-left {
-            stop-color: #3f51b5;  /* Indigo */
-            stop-opacity: 0.3;
-        }
-
-        .stop-right {
-            stop-color: #009688;  /* Teal */
-            stop-opacity: 0.7;
-        }
-
-        .filled {
-            fill: url(#mainGradient);
-        }
-
-        .outlined {
-            fill:   none;
-            stroke: url(#mainGradient);
-            stroke-width: 4;
-        }
-
-		div.tooltip {
-			max-width: 255px;
-			max-height: 400px;
-
-			position: absolute;
-			text-align: center;
-			padding: 16px 13px;
-			font: 12px sans-serif;
-			background: #323232;
-			border: 0;
-			border-radius: 2px;
-			opacity: 1 !important;
-			color: #fff;
-		}
-
-	</style>
+	<link href="css/common.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<div class="tooltip">
+	<div class="tooltip-inner">
+		<div class="tooltip_date">13.01.16, 10:35</div>
+		<div class="tooltip_title">Добавлена услуга "Везде как дома Россия" - 255 Р/мес.</div>
+		<div class="tooltip_period">
+			<div class="tooltip_period-label">Период деяствия</div>
+			<div class="tooltip_period-value">13.01.16 - 13.01.16</div>
+		</div>
+		<div class="tooltip_time">25:41м.</div>
+		<div class="tooltip_balance">Баланс:
+			<span>555</span> Р
+		</div>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="http://d3js.org/d3.v3.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="js/default.js"></script>
-<script>
-
-
-
-</script>
 </body>
 </html>

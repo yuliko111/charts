@@ -5,7 +5,7 @@
 		height = 500 - margin.top - margin.bottom;
 
 	var dataset = [
-		{x: 0, y: 0},
+		{x: 0, y: 0, disabled: true},
 		{x: 0, y: 5},
 		{x: 1, y: 8},
 		{x: 2, y: 13},
@@ -22,7 +22,7 @@
 		{x: 13, y: 36},
 		{x: 14, y: 40},
 		{x: 15, y: 38},
-		{x: 15, y: 0},
+		{x: 15, y: 0, disabled: true},
 	];
 
 	// возвращасет значение примерно в 3 раза больше (для X)
@@ -81,13 +81,22 @@
 		.attr("class", "tooltip")
 		.style("opacity", 0);
 
-	//  tooltipInner(x, y) {
-	// 	return `<div class="tooltip-inner">${x}<br/>${y}</div>`;
-	// };
+	function tooltipInner(x, y) {
+		return `<div class="tooltip-inner">
+					<div class="tooltip_date">13.01.16, 10:35</div>
+					<div class="tooltip_title">Добавлена услуга "Везде как дома Россия" - 255 Р/мес.</div>
+					<div class="tooltip_period">
+						<div class="tooltip_period-label">Период деяствия</div>
+						<div class="tooltip_period-value">13.01.16 - 13.01.16</div>
+					</div>
+					<div class="tooltip_time">25:41м.</div>
+					<div class="tooltip_balance">Баланс:
+						<span>555</span> Р
+					</div>
+				</div>`;
+	}
 
-	// var tooltipInner = tooltip.append('div')
-	// 	.attr('class', 'tooltip-inner');
-
+	//${x}<br/>${y}
 
 	mainGradient.append('stop')
 		.attr('class', 'stop-left')
@@ -116,9 +125,15 @@
 		.attr("d", line);
 
 	svg.selectAll("dot")
-		.data(dataset)
+		// .data(dataset)
+		.data(dataset.filter(function(item){
+			return !item.disabled;
+		}))
 		.enter().append("circle")
-		.attr("r", 5)
+		.attr("r", 7)
+		.attr("stroke", '#12aaeb')
+		.attr("stroke-width", '5')
+		.attr("fill", '#fff')
 		.attr("cx", function (d) {
 			return xScale(d.x);
 		})
@@ -131,8 +146,8 @@
 			tooltip.transition()
 				.duration(200)
 				.style("opacity", .9);
-			tooltip.html(d.x + "<br/>"  + d.y)
-			// tooltip.html(tooltipInner(d.x, d.y))
+			// tooltip.html(d.x + "<br/>"  + d.y)
+			tooltip.html(tooltipInner(d.x, d.y))
 				.style("left", (d3.event.pageX) + "px")
 				.style("top", (d3.event.pageY - 28) + "px");
 		})

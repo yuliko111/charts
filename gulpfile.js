@@ -80,8 +80,8 @@ gulp.task('js:build', function () {
         .pipe(eslint(path.lintJs))
         .pipe(eslint.format())
         .pipe(sourcemaps.init())
-        .pipe(uglify())
-        .pipe(sourcemaps.write(path.build.jsMaps))
+        // .pipe(uglify())
+        // .pipe(sourcemaps.write(path.build.jsMaps))
         .pipe(gulp.dest(path.build.js))
         .pipe(reload({stream: true}));
 });
