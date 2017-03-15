@@ -39,12 +39,12 @@
 		})])
 		.range([height, 0]);
 
-	var xAxis = d3.svg.axis()
-		.scale(xScale)
-		.orient("bottom")
-		.innerTickSize(-height)
-		.outerTickSize(0)
-		.tickPadding(10);
+	// var xAxis = d3.svg.axis()
+	// 	.scale(xScale)
+	// 	.orient("bottom")
+	// 	.innerTickSize(-height)
+	// 	.outerTickSize(0)
+	// 	.tickPadding(10);
 
 	var yAxis = d3.svg.axis()
 		.scale(yScale)
@@ -96,6 +96,40 @@
 				</div>`;
 	}
 
+	function tooltipLeft(eventX) {
+		let tooltipNode = document.querySelector('.tooltip');
+		let svgLeft = margin.left;
+		let svgRight = width - margin.left;
+		let widthTooltipPx = window.getComputedStyle(tooltipNode).width;
+		let halfTooltip = (widthTooltipPx.substring(0, widthTooltipPx.length - 2)) / 2;
+		let toLeft;
+
+		// console.log('eventX', eventX - halfTooltip - 6);
+		// console.log('svgRight', svgRight);
+		if (eventX - halfTooltip - 6 < svgLeft) {
+			console.log('слева');
+			// set :before coord for tooltip
+			toLeft = svgLeft;
+		} else if (eventX > svgRight) {
+			console.log('справа');
+			// set :before coord for tooltip
+			toLeft = svgRight - (halfTooltip)/2  + 6;
+		} else {
+			console.log('в центре');
+			toLeft = eventX - halfTooltip - 6;
+		}
+
+		return toLeft;
+	}
+
+	function tooltipTop(eventY) {
+		let tooltipNode = document.querySelector('.tooltip');
+		let heightTooltip = window.getComputedStyle(tooltipNode).height;
+		let toTop = eventY - (heightTooltip.substring(0, heightTooltip.length - 2)) - 8;
+
+		return toTop;
+	}
+
 	//${x}<br/>${y}
 
 	mainGradient.append('stop')
@@ -107,10 +141,10 @@
 
 
 	// вертикальные линии сетки
-	svg.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate(0," + height + ")")
-		.call(xAxis);
+	// svg.append("g")
+	// 	.attr("class", "x axis")
+	// 	.attr("transform", "translate(0," + height + ")")
+	// 	.call(xAxis);
 
 	// горизонтальные линии сетки
 	svg.append("g")
@@ -125,8 +159,8 @@
 		.attr("d", line);
 
 	svg.selectAll("dot")
-		// .data(dataset)
-		.data(dataset.filter(function(item){
+	// .data(dataset)
+		.data(dataset.filter(function (item) {
 			return !item.disabled;
 		}))
 		.enter().append("circle")
@@ -141,23 +175,19 @@
 			return yScale(d.y);
 		})
 		.on("mouseover", function (d) {
-			console.log('left', (d3.event.pageX));
-			console.log('top', (d3.event.pageY));
 			tooltip.transition()
 				.duration(200)
 				.style("opacity", .9);
 			// tooltip.html(d.x + "<br/>"  + d.y)
 			tooltip.html(tooltipInner(d.x, d.y))
-				.style("left", (d3.event.pageX) + "px")
-				.style("top", (d3.event.pageY - 28) + "px");
+				.style("left", tooltipLeft(d3.event.pageX) + "px")
+				.style("top", tooltipTop(d3.event.pageY) + "px");
 		})
 		.on("mouseout", function (d) {
-			console.log('2 mouseout');
 			tooltip.transition()
 				.duration(500)
 				.style("opacity", 0);
 		});
-
 
 })();
 
