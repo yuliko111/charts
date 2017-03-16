@@ -36,6 +36,10 @@
     "imagemin-pngquant": "^5.0.0"
   },
   "dependencies": {
-    "d3": "^4.7.3"
+    "babel-plugin-transform-es2015-block-scoping": "^6.23.0",
+    "babel-plugin-transform-es2015-template-literals": "^6.22.0",
+    "babel-polyfill": "^6.23.0",
+    "d3": "^4.7.3",
+    "gulp-babel": "^6.1.2"
   }
 }
