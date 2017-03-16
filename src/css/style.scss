@@ -33,11 +33,15 @@ p {
 
 .content {
   position: relative;
-  margin: 20px 100px;
+  margin: 40px 60px;
   width: 960px;
   height: 500px;
+  background: #d2d2d2;
+  //display: none;
 }
-
+.main-chart {
+  position: absolute;
+}
 .axis path,
 .axis line {
   fill: none;
@@ -101,14 +105,14 @@ p {
     content: "";
     display: block;
     position: absolute;
-    bottom: -8px;
+    bottom: -6px;
     left: calc(50% - 6px);
     right: calc(50% - 6px);
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 8px solid #323232;
+    border-top: 6px solid #323232;
   }
 
   &-inner {
