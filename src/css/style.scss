@@ -53,7 +53,9 @@ p {
   /*stroke: blue;*/
   /*stroke-width: 2px;*/
 }
-
+.filled {
+  pointer-events: none;
+}
 .tick {
 
 }
@@ -97,7 +99,7 @@ p {
   background: #323232;
   border: 0;
   border-radius: 2px;
-  //opacity: 1 !important;
+  opacity: 1 !important;
   color: #fff;
   box-sizing: border-box;
 

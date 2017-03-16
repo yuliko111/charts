@@ -99,6 +99,13 @@
 
 
     var svgDefs = svg.append('defs');
+    var svgBackground = svg.append('rect')
+        .attr('class', 'background')
+        .attr('x',0)
+        .attr('y',0)
+        .attr('width', width)
+        .attr('height', height)
+        .attr('fill', '#fff');
 
     var mainGradient = svgDefs.append('linearGradient')
         .attr('id', 'mainGradient')
@@ -170,6 +177,13 @@
         .attr('class', 'stop-right')
         .attr('offset', '1');
 
+    let tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .html(function(d) {
+            return tooltipInner();
+        })
+    .offset([-10, 0]);
+    svg.call(tip);
 
     // вертикальные линии сетки, кроме первой и ось Х
     var buildOsX = function () {
@@ -216,21 +230,8 @@
             .attr('cy', function (d) {
                 return yScale(d.y);
             })
-            .on('mouseover', function (d) {
-                let x = parseInt(this.cx.baseVal.value) + margin.left;
-                let y = parseInt(this.cy.baseVal.value) + margin.top;
-                tooltip.transition()
-                    .duration(200)
-                    .style('opacity', .9);
-                tooltip.html(tooltipInner(d.x, d.y))
-                    .style('left', tooltipLeft(x) + 'px')
-                    .style('top', tooltipTop(y) + 'px');
-            })
-            .on('mouseout', function (d) {
-                tooltip.transition()
-                    .duration(500)
-                    .style('opacity', 0);
-            });
+            .on('mouseenter', tip.show)
+            .on('mouseout', tip.hide);
     };
 
     buildOsX();
@@ -242,13 +243,13 @@
     function zoomed() {
         // buildChart();
         console.log();
-        svg.selectAll('.dot')
-            .attr('cx', function (d) {
-                return xScale(d.x);
-            })
-            .attr('cy', function (d) {
-                return yScale(d.y);
-            });
+        // svg.selectAll('.dot')
+        //     .attr('cx', function (d) {
+        //         return xScale(d.x);
+        //     })
+        //     .attr('cy', function (d) {
+        //         return yScale(d.y);
+        //     });
 
 
         svg.attr('transform', d3.event.transform);
