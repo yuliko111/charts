@@ -30,7 +30,12 @@ p {
   font: 400 16px/26px $font-fam;
   color: #494949;
 }
-
+.qqq {
+  cursor: all-scroll;
+}
+.y.axis path.domain {
+  display: none;
+}
 .content {
   position: relative;
   margin: 40px 60px;
@@ -99,7 +104,7 @@ p {
   background: #323232;
   border: 0;
   border-radius: 2px;
-  opacity: 1 !important;
+  //opacity: 1 !important;
   color: #fff;
   box-sizing: border-box;
 
