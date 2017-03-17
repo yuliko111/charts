@@ -45,6 +45,38 @@
         {x: 32, y: 0, disabled: true}
     ];
 
+    let dataset2 = [{
+        "eventStartDate": "1489757660000",
+        "eventFinishDate": "1489757661000",
+        "processDate": "1489757662000",
+        "eventName": "Связь. Исходящая (_Сотовые операторы)",
+        "amount": 20,
+        "metricUnit": 4,
+        "cost": 3,
+        "balance": 3115.55
+    }, {
+        "eventStartDate": "1489757660000",
+        "eventFinishDate": "1489757661000",
+        "processDate": "1489757662000",
+        "eventName": "Пополнение баланса",
+        "amount": 20,
+        "metricUnit": 4,
+        "cost": 100,
+        "balance": 3215.55
+    }, {
+        "eventStartDate": "1489757670000",
+        "eventFinishDate": "1489757671000",
+        "processDate": "1489757672000",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 20,
+        "metricUnit": 4,
+        "cost": 2.50,
+        "balance": 3213.05
+    }];
+
+    let year = new Date(dataset2[0].processDate * 1000);
+    console.log('year', year.getFullYear());
+
     let xScale = d3.scaleLinear()
         .domain([0, d3.max(dataset, function (d) {//интервал значений по оси Х
             return d.x;
@@ -74,7 +106,7 @@
         .tickSizeOuter(0)
         .tickPadding(25);
 
-    let line = d3.line()
+    let line = d3.line()// как я понимаю на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ... , то есть
         .x(function (d) {
             return xScale(d.x);
         })
@@ -107,11 +139,6 @@
         .attr('y1', '0')
         .attr('y2', '1');
 
-    let zoom = d3.zoom()
-        .scaleExtent([1, 40])
-        .translateExtent([[-100, -100], [width + 90, height + 100]])
-        .on('zoom', zoomed);
-
     function tooltipInner(x, y) {
         return `<div class='tooltip-inner'>
 					<div class='tooltip_date'>13.01.16, 10:35</div>
@@ -142,6 +169,7 @@
         .offset([-10, 0]);
     svg.call(tip);
 
+    let gY, gX;
     // вертикальные линии сетки, кроме первой и ось Х
     let buildOsX = function () {
         let HHHeight = d3.max(dataset, function (d) {
@@ -149,15 +177,15 @@
         });
         console.log('вот оно', HHHeight);//TODO
 
-        let gX = svg.append('g')
+        gX = svg.append('g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + 286 + ')')//TODO вместо height надо записать такое значение чтобы ось Х встала на свое место (286)
+            .attr('transform', 'translate(0,' + 327 + ')')//TODO вместо height надо записать такое значение чтобы ось Х встала на свое место (286), а теперь 327..
             .call(xAxis);
     };
 
     // горизонтальные линии сетки, кроме первой и ось У
     let buildOsY = function () {
-        let gY = svg.append('g')
+        gY = svg.append('g')
             .attr('class', 'y axis')
             .call(yAxis);
     };
@@ -165,8 +193,7 @@
     // график в точках
     let buildChart = function () {
 
-        svg
-            .append('g')
+        svg.append('g')
             .selectAll('.dot')
             .data(dataset.filter(function (item) {
                 return !item.disabled;
@@ -186,6 +213,12 @@
             })
             .on('mouseenter', tip.show)
             .on('mouseout', tip.hide);
+        //
+        // svg.selectAll('circle')
+        //     .data(dataset.filter(function (item) {
+        //         return (item.y < 0);
+        //     }))
+        //     .attr('stroke', 'red');
     };
 
     // график, в смысле залитая область
@@ -195,13 +228,25 @@
             .attr('class', 'filled')
             .attr('fill', '#000')
             .attr('d', line);
+
+        // .transition() // Wait one second. Then brown, and remove.
+        //     .ease(d3.easeElastic)
+        //     .delay(1000)
+        //     .style("fill", "brown");
+        // .remove();
+
     };
+
+    let zoom = d3.zoom()
+        .scaleExtent([1, 40])
+        .translateExtent([[-100, -100], [width + 90, height + 100]])
+        .on('zoom', zoomed);
 
     function zoomed() {
         svg.attr('transform', d3.event.transform);
         // svg.attr('class', 'qqq');
-        // gX.call(xAxis.scale(d3.event.transform.rescaleX(xx)));	// непонятно, при движении в зуме у графика и осей рассинхрон
-        // gY.call(yAxis.scale(d3.event.transform.rescaleY(yy)));
+        // gX.call(xAxis.scale(d3.event.transform.rescaleX(xScale)));	// непонятно, при движении в зуме у графика и осей рассинхрон
+        // gY.call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
     }
 
     function resetted() {
