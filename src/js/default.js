@@ -8,8 +8,9 @@
     let width = baseNodeWidth - margin.left - margin.right;
     let height = baseNodeHeigth - margin.top - margin.bottom;
 
+    let chart, area;
+
     let dataset = [
-        {x: 0, y: 0, disabled: true},
         {x: 0, y: 5},
         {x: 1, y: 8},
         {x: 2, y: 13},
@@ -41,8 +42,7 @@
         {x: 28, y: 32},
         {x: 29, y: 36},
         {x: 30, y: 40},
-        {x: 31, y: 38},
-        {x: 32, y: 0, disabled: true}
+        {x: 31, y: 38}
     ];
 
     let dataset2 = [{
@@ -75,7 +75,7 @@
     }];
 
     let year = new Date(dataset2[0].processDate * 1000);
-    console.log('year', year.getFullYear());
+    // console.log('year', year.getFullYear());
 
     let xScale = d3.scaleLinear()
         .domain([0, d3.max(dataset, function (d) {//интервал значений по оси Х
@@ -97,7 +97,7 @@
         .scale(xScale)
         .tickSizeInner(0)// раньше было значение -height. 0 скрывает вертикальные линии
         .tickSizeOuter(0)
-        .tickPadding(200);// отступ значений от оси Х TODO сюда значение = min(data.x) * scale
+        .tickPadding(25);// отступ значений от оси Х TODO сюда значение = min(data.x) * scale
 
     let yAxis = d3.axisLeft()
         .ticks(10)//разбиение, то есть какой интервал между двумя осями
@@ -175,11 +175,11 @@
         let HHHeight = d3.max(dataset, function (d) {
             return d.y;
         });
-        console.log('вот оно', HHHeight);//TODO
+        // console.log('вот оно', HHHeight);//TODO
 
         gX = svg.append('g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + 327 + ')')//TODO вместо height надо записать такое значение чтобы ось Х встала на свое место (286), а теперь 327..
+            .attr('transform', 'translate(0,' + height + ')')//TODO вместо height надо записать такое значение чтобы ось Х встала на свое место (286), а теперь 327..
             .call(xAxis);
     };
 
@@ -188,12 +188,32 @@
         gY = svg.append('g')
             .attr('class', 'y axis')
             .call(yAxis);
+
+        d3.selectAll('g.tick').each(function (d) {
+            // console.log(d, this);
+            if (d === 0) {
+                this.classList.add('zero-tick');
+            }
+        })
+
+    };
+
+    let prepareData = function () {
+        let minValY = d3.min(dataset, function (d) {//интервал значений по оси Х
+            return d.y;
+        });
+        let maxValX = d3.max(dataset, function (d) {//интервал значений по оси Х
+            return d.x;
+        });
+        dataset.unshift({x: 0, y: minValY, disabled: true});
+        dataset.push({x: maxValX, y: minValY, disabled: true});
     };
 
     // график в точках
     let buildChart = function () {
 
-        svg.append('g')
+        chart = svg
+            .append('svg')
             .selectAll('.dot')
             .data(dataset.filter(function (item) {
                 return !item.disabled;
@@ -213,17 +233,18 @@
             })
             .on('mouseenter', tip.show)
             .on('mouseout', tip.hide);
-        //
-        // svg.selectAll('circle')
-        //     .data(dataset.filter(function (item) {
-        //         return (item.y < 0);
-        //     }))
-        //     .attr('stroke', 'red');
+
+        svg.selectAll('.dot').each(function (d) {
+            if (d.y < 0) {
+                this.setAttribute('stroke', 'red');
+            }
+        });
     };
 
     // график, в смысле залитая область
     let buildArea = function () {
-        svg.append('path')
+        area = svg.selectAll('svg')
+            .append('path')
             .data([dataset])
             .attr('class', 'filled')
             .attr('fill', '#000')
@@ -243,22 +264,52 @@
         .on('zoom', zoomed);
 
     function zoomed() {
-        svg.attr('transform', d3.event.transform);
-        // svg.attr('class', 'qqq');
-        // gX.call(xAxis.scale(d3.event.transform.rescaleX(xScale)));	// непонятно, при движении в зуме у графика и осей рассинхрон
-        // gY.call(yAxis.scale(d3.event.transform.rescaleY(yScale)));
+        console.log('sss');
+        // chart.attr('transform', d3.event.transform); //удалить
+        // area.attr('transform', d3.event.transform);
+
+        // console.log(d3.event.transform);
+        // d3.selectAll('.dot').each(function (d) {
+        //     this.style.transform = 'scale(' + (d3.event.transform.k-1) + ')'
+        // });
+
+        let transform = d3.event.transform;
+
+        gX.call(xAxis.scale(transform.rescaleX(xScale)));	// непонятно, при движении в зуме у графика и осей рассинхрон
+        gY.call(yAxis.scale(transform.rescaleY(yScale)));
+
+        chart
+            .attr('cx', function(d) {
+                return transform.applyX(xScale(d.x));
+            })
+            .attr('cy', function(d) {
+                return transform.applyY(yScale(d.y));
+            });
+
+        let line = d3.line()// как я понимаю на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ... , то есть
+            .x(function (d) {
+                return transform.applyX(xScale(d.x));
+            })
+            .y(function (d) {
+                return transform.applyY(yScale(d.y));
+            });
+
+        area
+            .attr('d', line);
+
+
+        // TODO после перерисовки осей, получать новые даныне и перестраивать график
+
     }
 
-    function resetted() {
-        svg.transition()
-            .duration(750)
-            .call(zoom.transform, d3.zoomIdentity);
-    }
-
+    prepareData();
     buildOsX();
     buildOsY();
     buildChart();
     buildArea();
+
+
+    svg.call(zoom.transform, d3.zoomIdentity);
     svg.call(zoom);
 
 })();
