@@ -253,18 +253,10 @@
 
             let newProcessDate = new Date(year, month, day, hour, minute, second);
             let newProcessDate2 = newProcessDate.getDay() + '.' + newProcessDate.getMonth() + '  ' + newProcessDate.getHours() + ':' + newProcessDate.getMinutes();
-
-            function type(d) {
-                d.date = parseDate(d.date);
-                d.price = +d.price;
-                return d;
-            }
-
-            console.log(newProcessDate2);
+            // console.log(newProcessDate2);
 
             // console.log('oldProcessDate', item.processDate);
             // console.log('newProcessDate', newProcessDate);
-
             let otherProcessDate = new Date(item.processDate);
             // console.log('otherProcessDate', otherProcessDate);
             // oldProcessDate совпадает с newProcessDate, но они не совпадают с otherProcessDate
@@ -272,11 +264,8 @@
             newDataArr.push({x: newProcessDate, y: item.balance});
         });
         return newDataArr;
-        console.log(newDataArr);
 
     };
-    let preResultArr = prepareDataIn(dataset3);
-
 
     let xScale = d3.scaleLinear()
         .domain([0, d3.max(dataset1, function (d) {//интервал значений по оси Х
@@ -373,14 +362,10 @@
     let gY, gX;
     // вертикальные линии сетки, кроме первой и ось Х
     let buildOsX = function () {
-        let HHHeight = d3.max(dataset1, function (d) {
-            return d.y;
-        });
-        // console.log('вот оно', HHHeight);//TODO
 
         gX = svg.append('g')
             .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + height + ')')//TODO вместо height надо записать такое значение чтобы ось Х встала на свое место (286), а теперь 327..
+            .attr('transform', 'translate(0,' + height + ')')
             .call(xAxis);
     };
 
@@ -391,7 +376,6 @@
             .call(yAxis);
 
         d3.selectAll('g.tick').each(function (d) {
-            // console.log(d, this);
             if (d === 0) {
                 this.classList.add('zero-tick');
             }
