@@ -74,8 +74,18 @@
         "balance": 3213.05
     }];
 
-    let year = new Date(dataset2[0].processDate * 1000);
-    // console.log('year', year.getFullYear());
+    let newDataArr = [];
+    let prepareDataIn = function (dataIn) {
+        dataIn.forEach(function (item) {
+            let date = new Date(item.processDate * 1000);
+            let dateMmDd = date.getDate() + '.' + (date.getMonth() + 1);
+            newDataArr.push({x: +dateMmDd, y: item.amount});
+            console.log('newDataArr', newDataArr);
+        });
+        return newDataArr;
+    };
+    console.log('newDataArr', newDataArr);
+    console.log('dataset', dataset);
 
     let xScale = d3.scaleLinear()
         .domain([0, d3.max(dataset, function (d) {//интервал значений по оси Х
@@ -198,7 +208,7 @@
 
     };
 
-    let prepareData = function () {
+    let prepareDataAxis = function () {
         let minValY = d3.min(dataset, function (d) {//интервал значений по оси Х
             return d.y;
         });
@@ -214,6 +224,7 @@
 
         chart = svg
             .append('svg')
+            .attr('class', 'chart-area')
             .selectAll('.dot')
             .data(dataset.filter(function (item) {
                 return !item.disabled;
@@ -264,25 +275,18 @@
         .on('zoom', zoomed);
 
     function zoomed() {
-        console.log('sss');
-        // chart.attr('transform', d3.event.transform); //удалить
-        // area.attr('transform', d3.event.transform);
-
-        // console.log(d3.event.transform);
-        // d3.selectAll('.dot').each(function (d) {
-        //     this.style.transform = 'scale(' + (d3.event.transform.k-1) + ')'
-        // });
+        console.log('pan and zoom');
 
         let transform = d3.event.transform;
 
-        gX.call(xAxis.scale(transform.rescaleX(xScale)));	// непонятно, при движении в зуме у графика и осей рассинхрон
+        gX.call(xAxis.scale(transform.rescaleX(xScale)));
         gY.call(yAxis.scale(transform.rescaleY(yScale)));
 
         chart
-            .attr('cx', function(d) {
+            .attr('cx', function (d) {
                 return transform.applyX(xScale(d.x));
             })
-            .attr('cy', function(d) {
+            .attr('cy', function (d) {
                 return transform.applyY(yScale(d.y));
             });
 
@@ -294,15 +298,15 @@
                 return transform.applyY(yScale(d.y));
             });
 
-        area
-            .attr('d', line);
+        area.attr('d', line);
 
 
         // TODO после перерисовки осей, получать новые даныне и перестраивать график
 
     }
 
-    prepareData();
+    prepareDataIn(dataset2);
+    prepareDataAxis();
     buildOsX();
     buildOsY();
     buildChart();
