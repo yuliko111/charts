@@ -59,7 +59,7 @@
         "eventFinishDate": "1489757661000",
         "processDate": "1489757662000",
         "eventName": "Пополнение баланса",
-        "amount": 20,
+        "amount": 21,
         "metricUnit": 4,
         "cost": 100,
         "balance": 3215.55
@@ -68,7 +68,7 @@
         "eventFinishDate": "1489757671000",
         "processDate": "1489757672000",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
-        "amount": 20,
+        "amount": 22,
         "metricUnit": 4,
         "cost": 2.50,
         "balance": 3213.05
@@ -80,12 +80,9 @@
             let date = new Date(item.processDate * 1000);
             let dateMmDd = date.getDate() + '.' + (date.getMonth() + 1);
             newDataArr.push({x: +dateMmDd, y: item.amount});
-            console.log('newDataArr', newDataArr);
         });
         return newDataArr;
     };
-    console.log('newDataArr', newDataArr);
-    console.log('dataset', dataset);
 
     let xScale = d3.scaleLinear()
         .domain([0, d3.max(dataset, function (d) {//интервал значений по оси Х
@@ -275,7 +272,6 @@
         .on('zoom', zoomed);
 
     function zoomed() {
-        console.log('pan and zoom');
 
         let transform = d3.event.transform;
 
@@ -305,6 +301,7 @@
 
     }
 
+
     prepareDataIn(dataset2);
     prepareDataAxis();
     buildOsX();
@@ -315,5 +312,9 @@
 
     svg.call(zoom.transform, d3.zoomIdentity);
     svg.call(zoom);
+
+
+    console.log('newDataArr', newDataArr);
+    console.log('dataset', dataset);
 
 })();
