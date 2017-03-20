@@ -75,162 +75,162 @@
     }];
 
     let dataset3 = [{
-        "eventStartDate": "2017-02-20T08:32:432Z",
-        "eventFinishDate": "2017-02-20T08:34:434Z",
-        "processDate": "2017-02-20T08:47:436Z",
+        "eventStartDate": "2017-03-10T08:32:43Z",
+        "eventFinishDate": "2017-03-10T08:34:43Z",
+        "processDate": "2017-03-10T08:47:43Z",
         "eventName": "Связь. Исходящая (_Сотовые операторы)",
         "amount": 20,
         "metricUnit": 4,
         "cost": 3,
         "balance": 3115.55
     }, {
-        "eventStartDate": "2017-02-20T12:06:499Z",
-        "eventFinishDate": "2017-02-20T12:06:499Z",
-        "processDate": "2017-02-20T12:08:649Z",
+        "eventStartDate": "2017-03-10T12:06:49Z",
+        "eventFinishDate": "2017-03-10T12:06:49Z",
+        "processDate": "2017-03-10T12:08:49Z",
         "eventName": "Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 100,
         "balance": 3215.55
     }, {
-        "eventStartDate": "2017-02-20T21:31:649Z",
-        "eventFinishDate": "2017-02-20T21:30:549Z",
-        "processDate": "2017-02-20T21:36:949Z",
+        "eventStartDate": "2017-03-10T21:31:64Z",
+        "eventFinishDate": "2017-03-10T21:30:54Z",
+        "processDate": "2017-03-10T21:36:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 9,
         "metricUnit": 4,
         "cost": 2.50,
         "balance": 3213.05
     }, {
-        "eventStartDate": "2017-02-25T06:15:849Z",
-        "eventFinishDate": "2017-02-20T06:30:549Z",
-        "processDate": "2017-02-20T06:30:549Z",
+        "eventStartDate": "2017-03-10T06:15:84Z",
+        "eventFinishDate": "2017-03-10T06:30:54Z",
+        "processDate": "2017-03-10T06:30:49Z",
         "eventName": "Связь. Входящая (_Сотовые операторы)",
         "amount": 15,
         "metricUnit": 4,
         "cost": 0,
         "balance": 3213.05
     }, {
-        "eventStartDate": "2017-02-25T06:30:849Z",
-        "eventFinishDate": "2017-02-20T06:31:549Z",
-        "processDate": "2017-02-20T06:31:549Z",
+        "eventStartDate": "2017-03-10T06:30:84Z",
+        "eventFinishDate": "2017-03-10T06:31:54Z",
+        "processDate": "2017-03-10T06:31:49Z",
         "eventName": "Связь. Входящая (_Сотовые операторы)",
         "amount": 1,
         "metricUnit": 4,
         "cost": 0,
         "balance": 3213.05
     }, {
-        "eventStartDate": "2017-02-20T10:53:549Z",
-        "eventFinishDate": "2017-02-20T10:53:549Z",
-        "processDate": "2017-02-20T10:53:549Z",
+        "eventStartDate": "2017-03-10T10:53:59Z",
+        "eventFinishDate": "2017-03-10T10:53:59Z",
+        "processDate": "2017-03-10T10:53:49Z",
         "eventName": "Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 50,
         "balance": 3255.55
     }, {
-        "eventStartDate": "2017-02-20T10:55:549Z",
-        "eventFinishDate": "2017-02-20T10:57:849Z",
-        "processDate": "2017-02-20T10:57:849Z",
+        "eventStartDate": "2017-03-10T10:55:59Z",
+        "eventFinishDate": "2017-03-10T10:57:89Z",
+        "processDate": "2017-03-10T10:57:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 2,
         "metricUnit": 4,
         "cost": 6.50,
         "balance": 3206.55
     }, {
-        "eventStartDate": "2017-02-20T16:05:549Z",
-        "eventFinishDate": "2017-02-20T16:07:849Z",
-        "processDate": "2017-02-20T16:08:849Z",
+        "eventStartDate": "2017-03-10T16:05:54Z",
+        "eventFinishDate": "2017-03-10T16:07:89Z",
+        "processDate": "2017-03-10T16:08:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 4,
         "metricUnit": 4,
         "cost": 4.90,
         "balance": 3204.12
     }, {
-        "eventStartDate": "2017-02-20T23:05:549Z",
-        "eventFinishDate": "2017-02-20T23:05:549Z",
-        "processDate": "2017-02-20T23:05:549Z",
+        "eventStartDate": "2017-03-10T23:05:54Z",
+        "eventFinishDate": "2017-03-10T23:05:59Z",
+        "processDate": "2017-03-10T23:05:49Z",
         "eventName": "SMS. Исходящая",
         "amount": 1,
         "metricUnit": 4,
         "cost": 3,
         "balance": 3201.12
     }, {
-        "eventStartDate": "2017-02-21T00:01:549Z",
-        "eventFinishDate": "2017-02-21T00:01:549Z",
-        "processDate": "2017-02-21T00:02:549Z",
+        "eventStartDate": "2017-03-11T00:01:59Z",
+        "eventFinishDate": "2017-03-11T00:01:59Z",
+        "processDate": "2017-03-11T00:02:59Z",
         "eventName": "SMS. Входящая",
         "amount": 1,
         "metricUnit": 4,
         "cost": 0,
         "balance": 3201.12
     }, {
-        "eventStartDate": "2017-02-21T01:06:549Z",
-        "eventFinishDate": "2017-02-21T01:12:549Z",
-        "processDate": "2017-02-21T01:13:549Z",
+        "eventStartDate": "2017-03-11T01:06:54Z",
+        "eventFinishDate": "2017-03-11T01:12:54Z",
+        "processDate": "2017-03-11T01:13:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 6,
         "metricUnit": 4,
         "cost": 5,
         "balance": 3199.12
     }, {
-        "eventStartDate": "2017-02-21T14:32:549Z",
-        "eventFinishDate": "2017-02-21T14:32:549Z",
-        "processDate": "2017-02-21T14:32:549Z",
+        "eventStartDate": "2017-03-11T14:32:54Z",
+        "eventFinishDate": "2017-03-11T14:32:54Z",
+        "processDate": "2017-03-11T14:32:49Z",
         "eventName": "Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 25,
         "balance": 3224.12
     }, {
-        "eventStartDate": "2017-02-21T16:57:549Z",
-        "eventFinishDate": "2017-02-21T17:19:549Z",
-        "processDate": "2017-02-21T17:19:549Z",
+        "eventStartDate": "2017-03-11T16:57:54Z",
+        "eventFinishDate": "2017-03-11T17:19:54Z",
+        "processDate": "2017-03-11T17:19:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 22,
         "metricUnit": 4,
         "cost": 87,
         "balance": 3137.12
     }, {
-        "eventStartDate": "2017-02-21T20:07:549Z",
-        "eventFinishDate": "2017-02-21T21:57:549Z",
-        "processDate": "2017-02-21T17:19:549Z",
+        "eventStartDate": "2017-03-11T20:07:54Z",
+        "eventFinishDate": "2017-03-11T21:57:54Z",
+        "processDate": "2017-03-11T17:19:59Z",
         "eventName": "GPRS",
         "amount": 114,
         "metricUnit": 4,
         "cost": 3601.14,
         "balance": -464.02
     }, {
-        "eventStartDate": "2017-02-21T22:09:549Z",
-        "eventFinishDate": "2017-02-21T22:12:549Z",
-        "processDate": "2017-02-21T22:13:549Z",
+        "eventStartDate": "2017-03-11T22:09:54Z",
+        "eventFinishDate": "2017-03-11T22:12:54Z",
+        "processDate": "2017-03-11T22:13:54Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 4,
         "metricUnit": 4,
         "cost": 17.4,
         "balance": -481.42
     }, {
-        "eventStartDate": "2017-02-21T22:34:549Z",
-        "eventFinishDate": "2017-02-21T22:36:549Z",
-        "processDate": "2017-02-21T22:36:549Z",
+        "eventStartDate": "2017-03-11T22:34:54Z",
+        "eventFinishDate": "2017-03-11T22:36:54Z",
+        "processDate": "2017-03-11T22:36:59Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 2,
         "metricUnit": 4,
         "cost": 7.3,
         "balance": -488.72
     }, {
-        "eventStartDate": "2017-02-22T10:32:549Z",
-        "eventFinishDate": "2017-02-22T10:32:549Z",
-        "processDate": "2017-02-22T10:32:549Z",
+        "eventStartDate": "2017-03-12T10:32:54Z",
+        "eventFinishDate": "2017-03-12T10:32:54Z",
+        "processDate": "2017-03-12T10:32:54Z",
         "eventName": "Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 500,
         "balance": 11.28
     }, {
-        "eventStartDate": "2017-02-22T11:03:549Z",
-        "eventFinishDate": "2017-02-22T11:10:549Z",
-        "processDate": "2017-02-22T11:10:549Z",
+        "eventStartDate": "2017-03-12T11:03:54Z",
+        "eventFinishDate": "2017-03-12T11:10:54Z",
+        "processDate": "2017-03-12T11:10:54Z",
         "eventName": "Связь. Входящая (_Сотовые операторы)",
         "amount": 2,
         "metricUnit": 4,
@@ -241,8 +241,6 @@
     let newDataArr = [];
     let prepareDataIn = function (dataIn) {
         dataIn.forEach(function (item) {
-            // let date = new Date(item.processDate * 1000);
-            // let dateMmDd = date.getDate() + '.' + (date.getMonth() + 1);
 
             let DateFormatted = item.processDate.split('T');
             let year = +DateFormatted[0].split('-')[0];
@@ -250,12 +248,26 @@
             let day = +DateFormatted[0].split('-')[2];
             let hour = +DateFormatted[1].split(':')[0];
             let minute = +DateFormatted[1].split(':')[1];
-            let second = 0;
+            let second = +DateFormatted[1].split(':')[2].split('Z')[0];
             let millisecond = +DateFormatted[1].split(':')[2].split('Z')[0];
 
-            let newProcessDate = new Date(year, month, day, hour, minute, second, millisecond);
-            // console.log('newProcessDate', newProcessDate);
+            let newProcessDate = new Date(year, month, day, hour, minute, second);
+            let newProcessDate2 = newProcessDate.getDay() + '.' + newProcessDate.getMonth() + '  ' + newProcessDate.getHours() + ':' + newProcessDate.getMinutes();
+
+            function type(d) {
+                d.date = parseDate(d.date);
+                d.price = +d.price;
+                return d;
+            }
+
+            console.log(newProcessDate2);
+
             // console.log('oldProcessDate', item.processDate);
+            // console.log('newProcessDate', newProcessDate);
+
+            let otherProcessDate = new Date(item.processDate);
+            // console.log('otherProcessDate', otherProcessDate);
+            // oldProcessDate совпадает с newProcessDate, но они не совпадают с otherProcessDate
 
             newDataArr.push({x: newProcessDate, y: item.balance});
         });
@@ -263,7 +275,7 @@
         console.log(newDataArr);
 
     };
-    let preResultArr = prepareDataIn(dataset2);
+    let preResultArr = prepareDataIn(dataset3);
 
 
     let xScale = d3.scaleLinear()
