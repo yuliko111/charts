@@ -10,7 +10,7 @@
 
     let chart, area;
 
-    let dataset = [
+    let dataset1 = [
         {x: 0, y: 5},
         {x: 1, y: 8},
         {x: 2, y: 13},
@@ -46,56 +46,238 @@
     ];
 
     let dataset2 = [{
-        "eventStartDate": "1489757660000",
-        "eventFinishDate": "1489757661000",
-        "processDate": "1489757662000",
+        "eventStartDate": "2017-02-20T08:32:432Z",
+        "eventFinishDate": "2017-02-20T08:34:434Z",
+        "processDate": "2017-02-20T08:47:436Z",
         "eventName": "Связь. Исходящая (_Сотовые операторы)",
         "amount": 20,
         "metricUnit": 4,
         "cost": 3,
         "balance": 3115.55
     }, {
-        "eventStartDate": "1489757660000",
-        "eventFinishDate": "1489757661000",
-        "processDate": "1489757662000",
+        "eventStartDate": "2017-02-20T12:06:499Z",
+        "eventFinishDate": "2017-02-20T12:06:499Z",
+        "processDate": "2017-02-21T12:08:649Z",
         "eventName": "Пополнение баланса",
-        "amount": 21,
-        "metricUnit": 4,
+        "amount": 1,
+        "metricUnit": 1,
         "cost": 100,
         "balance": 3215.55
     }, {
-        "eventStartDate": "1489757670000",
-        "eventFinishDate": "1489757671000",
-        "processDate": "1489757672000",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
-        "amount": 22,
+        "eventStartDate": "2017-02-20T21:31:649Z",
+        "eventFinishDate": "2017-02-20T21:30:549Z",
+        "processDate": "2017-02-22T21:36:949Z",
+        "eventName": "Связь. Входящая (_Международная, СНГ)",
+        "amount": 9,
         "metricUnit": 4,
         "cost": 2.50,
         "balance": 3213.05
     }];
 
+    let dataset3 = [{
+        "eventStartDate": "2017-02-20T08:32:432Z",
+        "eventFinishDate": "2017-02-20T08:34:434Z",
+        "processDate": "2017-02-20T08:47:436Z",
+        "eventName": "Связь. Исходящая (_Сотовые операторы)",
+        "amount": 20,
+        "metricUnit": 4,
+        "cost": 3,
+        "balance": 3115.55
+    }, {
+        "eventStartDate": "2017-02-20T12:06:499Z",
+        "eventFinishDate": "2017-02-20T12:06:499Z",
+        "processDate": "2017-02-20T12:08:649Z",
+        "eventName": "Пополнение баланса",
+        "amount": 1,
+        "metricUnit": 1,
+        "cost": 100,
+        "balance": 3215.55
+    }, {
+        "eventStartDate": "2017-02-20T21:31:649Z",
+        "eventFinishDate": "2017-02-20T21:30:549Z",
+        "processDate": "2017-02-20T21:36:949Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 9,
+        "metricUnit": 4,
+        "cost": 2.50,
+        "balance": 3213.05
+    }, {
+        "eventStartDate": "2017-02-25T06:15:849Z",
+        "eventFinishDate": "2017-02-20T06:30:549Z",
+        "processDate": "2017-02-20T06:30:549Z",
+        "eventName": "Связь. Входящая (_Сотовые операторы)",
+        "amount": 15,
+        "metricUnit": 4,
+        "cost": 0,
+        "balance": 3213.05
+    }, {
+        "eventStartDate": "2017-02-25T06:30:849Z",
+        "eventFinishDate": "2017-02-20T06:31:549Z",
+        "processDate": "2017-02-20T06:31:549Z",
+        "eventName": "Связь. Входящая (_Сотовые операторы)",
+        "amount": 1,
+        "metricUnit": 4,
+        "cost": 0,
+        "balance": 3213.05
+    }, {
+        "eventStartDate": "2017-02-20T10:53:549Z",
+        "eventFinishDate": "2017-02-20T10:53:549Z",
+        "processDate": "2017-02-20T10:53:549Z",
+        "eventName": "Пополнение баланса",
+        "amount": 1,
+        "metricUnit": 1,
+        "cost": 50,
+        "balance": 3255.55
+    }, {
+        "eventStartDate": "2017-02-20T10:55:549Z",
+        "eventFinishDate": "2017-02-20T10:57:849Z",
+        "processDate": "2017-02-20T10:57:849Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 2,
+        "metricUnit": 4,
+        "cost": 6.50,
+        "balance": 3206.55
+    }, {
+        "eventStartDate": "2017-02-20T16:05:549Z",
+        "eventFinishDate": "2017-02-20T16:07:849Z",
+        "processDate": "2017-02-20T16:08:849Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 4,
+        "metricUnit": 4,
+        "cost": 4.90,
+        "balance": 3204.12
+    }, {
+        "eventStartDate": "2017-02-20T23:05:549Z",
+        "eventFinishDate": "2017-02-20T23:05:549Z",
+        "processDate": "2017-02-20T23:05:549Z",
+        "eventName": "SMS. Исходящая",
+        "amount": 1,
+        "metricUnit": 4,
+        "cost": 3,
+        "balance": 3201.12
+    }, {
+        "eventStartDate": "2017-02-21T00:01:549Z",
+        "eventFinishDate": "2017-02-21T00:01:549Z",
+        "processDate": "2017-02-21T00:02:549Z",
+        "eventName": "SMS. Входящая",
+        "amount": 1,
+        "metricUnit": 4,
+        "cost": 0,
+        "balance": 3201.12
+    }, {
+        "eventStartDate": "2017-02-21T01:06:549Z",
+        "eventFinishDate": "2017-02-21T01:12:549Z",
+        "processDate": "2017-02-21T01:13:549Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 6,
+        "metricUnit": 4,
+        "cost": 5,
+        "balance": 3199.12
+    }, {
+        "eventStartDate": "2017-02-21T14:32:549Z",
+        "eventFinishDate": "2017-02-21T14:32:549Z",
+        "processDate": "2017-02-21T14:32:549Z",
+        "eventName": "Пополнение баланса",
+        "amount": 1,
+        "metricUnit": 1,
+        "cost": 25,
+        "balance": 3224.12
+    }, {
+        "eventStartDate": "2017-02-21T16:57:549Z",
+        "eventFinishDate": "2017-02-21T17:19:549Z",
+        "processDate": "2017-02-21T17:19:549Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 22,
+        "metricUnit": 4,
+        "cost": 87,
+        "balance": 3137.12
+    }, {
+        "eventStartDate": "2017-02-21T20:07:549Z",
+        "eventFinishDate": "2017-02-21T21:57:549Z",
+        "processDate": "2017-02-21T17:19:549Z",
+        "eventName": "GPRS",
+        "amount": 114,
+        "metricUnit": 4,
+        "cost": 3601.14,
+        "balance": -464.02
+    }, {
+        "eventStartDate": "2017-02-21T22:09:549Z",
+        "eventFinishDate": "2017-02-21T22:12:549Z",
+        "processDate": "2017-02-21T22:13:549Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 4,
+        "metricUnit": 4,
+        "cost": 17.4,
+        "balance": -481.42
+    }, {
+        "eventStartDate": "2017-02-21T22:34:549Z",
+        "eventFinishDate": "2017-02-21T22:36:549Z",
+        "processDate": "2017-02-21T22:36:549Z",
+        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "amount": 2,
+        "metricUnit": 4,
+        "cost": 7.3,
+        "balance": -488.72
+    }, {
+        "eventStartDate": "2017-02-22T10:32:549Z",
+        "eventFinishDate": "2017-02-22T10:32:549Z",
+        "processDate": "2017-02-22T10:32:549Z",
+        "eventName": "Пополнение баланса",
+        "amount": 1,
+        "metricUnit": 1,
+        "cost": 500,
+        "balance": 11.28
+    }, {
+        "eventStartDate": "2017-02-22T11:03:549Z",
+        "eventFinishDate": "2017-02-22T11:10:549Z",
+        "processDate": "2017-02-22T11:10:549Z",
+        "eventName": "Связь. Входящая (_Сотовые операторы)",
+        "amount": 2,
+        "metricUnit": 4,
+        "cost": 1.3,
+        "balance": 9.98
+    }];
+
     let newDataArr = [];
     let prepareDataIn = function (dataIn) {
         dataIn.forEach(function (item) {
-            let date = new Date(item.processDate * 1000);
-            let dateMmDd = date.getDate() + '.' + (date.getMonth() + 1);
-            newDataArr.push({x: +dateMmDd, y: item.amount});
+            // let date = new Date(item.processDate * 1000);
+            // let dateMmDd = date.getDate() + '.' + (date.getMonth() + 1);
+
+            let DateFormatted = item.processDate.split('T');
+            let year = +DateFormatted[0].split('-')[0];
+            let month = +DateFormatted[0].split('-')[1];
+            let day = +DateFormatted[0].split('-')[2];
+            let hour = +DateFormatted[1].split(':')[0];
+            let minute = +DateFormatted[1].split(':')[1];
+            let second = 0;
+            let millisecond = +DateFormatted[1].split(':')[2].split('Z')[0];
+
+            let newProcessDate = new Date(year, month, day, hour, minute, second, millisecond);
+            // console.log('newProcessDate', newProcessDate);
+            // console.log('oldProcessDate', item.processDate);
+
+            newDataArr.push({x: newProcessDate, y: item.balance});
         });
         return newDataArr;
+        console.log(newDataArr);
+
     };
+    let preResultArr = prepareDataIn(dataset2);
+
 
     let xScale = d3.scaleLinear()
-        .domain([0, d3.max(dataset, function (d) {//интервал значений по оси Х
+        .domain([0, d3.max(dataset1, function (d) {//интервал значений по оси Х
             return d.x;
         })])
         .range([0, width]);//типа растянуть по ширине всей свг X и оси и график и всё
 
     let yScale = d3.scaleLinear()
         .domain([
-            d3.min(dataset, function (d) {
+            d3.min(dataset1, function (d) {
                 return d.y;
             }),
-            d3.max(dataset, function (d) {
+            d3.max(dataset1, function (d) {
                 return d.y;
             })])
         .range([height, 0]);
@@ -179,7 +361,7 @@
     let gY, gX;
     // вертикальные линии сетки, кроме первой и ось Х
     let buildOsX = function () {
-        let HHHeight = d3.max(dataset, function (d) {
+        let HHHeight = d3.max(dataset1, function (d) {
             return d.y;
         });
         // console.log('вот оно', HHHeight);//TODO
@@ -206,14 +388,14 @@
     };
 
     let prepareDataAxis = function () {
-        let minValY = d3.min(dataset, function (d) {//интервал значений по оси Х
+        let minValY = d3.min(dataset1, function (d) {//интервал значений по оси Х
             return d.y;
         });
-        let maxValX = d3.max(dataset, function (d) {//интервал значений по оси Х
+        let maxValX = d3.max(dataset1, function (d) {//интервал значений по оси Х
             return d.x;
         });
-        dataset.unshift({x: 0, y: minValY, disabled: true});
-        dataset.push({x: maxValX, y: minValY, disabled: true});
+        dataset1.unshift({x: 0, y: minValY, disabled: true});
+        dataset1.push({x: maxValX, y: minValY, disabled: true});
     };
 
     // график в точках
@@ -223,7 +405,7 @@
             .append('svg')
             .attr('class', 'chart-area')
             .selectAll('.dot')
-            .data(dataset.filter(function (item) {
+            .data(dataset1.filter(function (item) {
                 return !item.disabled;
             }))
             .enter()
@@ -253,7 +435,7 @@
     let buildArea = function () {
         area = svg.selectAll('svg')
             .append('path')
-            .data([dataset])
+            .data([dataset1])
             .attr('class', 'filled')
             .attr('fill', '#000')
             .attr('d', line);
@@ -302,7 +484,6 @@
     }
 
 
-    prepareDataIn(dataset2);
     prepareDataAxis();
     buildOsX();
     buildOsY();
@@ -315,6 +496,6 @@
 
 
     console.log('newDataArr', newDataArr);
-    console.log('dataset', dataset);
+    console.log('dataset1', dataset1);
 
 })();
