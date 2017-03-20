@@ -10,71 +10,7 @@
 
     let chart, area;
 
-    let dataset1 = [
-        {x: 0, y: 5},
-        {x: 1, y: 8},
-        {x: 2, y: 13},
-        {x: 3, y: 12},
-        {x: 4, y: 16},
-        {x: 5, y: 21},
-        {x: 6, y: 18},
-        {x: 7, y: 23},
-        {x: 8, y: 24},
-        {x: 9, y: 28},
-        {x: 10, y: 35},
-        {x: 11, y: 30},
-        {x: 12, y: 32},
-        {x: 13, y: 36},
-        {x: 14, y: 40},
-        {x: 15, y: 38},
-        {x: 16, y: 20},
-        {x: 17, y: 12},
-        {x: 18, y: 5},
-        {x: 19, y: 10},
-        {x: 20, y: -3},
-        {x: 21, y: -8},
-        {x: 22, y: -15},
-        {x: 23, y: -5},
-        {x: 24, y: 5},
-        {x: 25, y: 28},
-        {x: 26, y: 35},
-        {x: 27, y: 30},
-        {x: 28, y: 32},
-        {x: 29, y: 36},
-        {x: 30, y: 40},
-        {x: 31, y: 38}
-    ];
-
-    let dataset2 = [{
-        "eventStartDate": "2017-02-20T08:32:432Z",
-        "eventFinishDate": "2017-02-20T08:34:434Z",
-        "processDate": "2017-02-20T08:47:436Z",
-        "eventName": "Связь. Исходящая (_Сотовые операторы)",
-        "amount": 20,
-        "metricUnit": 4,
-        "cost": 3,
-        "balance": 3115.55
-    }, {
-        "eventStartDate": "2017-02-20T12:06:499Z",
-        "eventFinishDate": "2017-02-20T12:06:499Z",
-        "processDate": "2017-02-21T12:08:649Z",
-        "eventName": "Пополнение баланса",
-        "amount": 1,
-        "metricUnit": 1,
-        "cost": 100,
-        "balance": 3215.55
-    }, {
-        "eventStartDate": "2017-02-20T21:31:649Z",
-        "eventFinishDate": "2017-02-20T21:30:549Z",
-        "processDate": "2017-02-22T21:36:949Z",
-        "eventName": "Связь. Входящая (_Международная, СНГ)",
-        "amount": 9,
-        "metricUnit": 4,
-        "cost": 2.50,
-        "balance": 3213.05
-    }];
-
-    let dataset3 = [{
+    let rawData = [{
         "eventStartDate": "2017-03-10T08:32:43Z",
         "eventFinishDate": "2017-03-10T08:34:43Z",
         "processDate": "2017-03-10T08:47:43Z",
@@ -238,39 +174,44 @@
         "balance": 9.98
     }];
 
-    let newDataArr = [];
+    let parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
+
+    let dataset1 = [];
     let prepareDataIn = function (dataIn) {
         dataIn.forEach(function (item) {
+            // let newProcessDate = new Date(item.processDate);
+            // console.log('newProcessDate', newProcessDate);//TODO время на 3 часа больше исходного - разобраться
 
-            let DateFormatted = item.processDate.split('T');
-            let year = +DateFormatted[0].split('-')[0];
-            let month = +DateFormatted[0].split('-')[1];
-            let day = +DateFormatted[0].split('-')[2];
-            let hour = +DateFormatted[1].split(':')[0];
-            let minute = +DateFormatted[1].split(':')[1];
-            let second = +DateFormatted[1].split(':')[2].split('Z')[0];
-            let millisecond = +DateFormatted[1].split(':')[2].split('Z')[0];
+            let eventStartDate = new Date(item.eventStartDate);
+            var monthNameFormat = d3.timeFormat("%b-%Y");
+            console.log(monthNameFormat(new Date(item.eventStartDate)), '---', item.eventStartDate);
 
-            let newProcessDate = new Date(year, month, day, hour, minute, second);
-            let newProcessDate2 = newProcessDate.getDay() + '.' + newProcessDate.getMonth() + '  ' + newProcessDate.getHours() + ':' + newProcessDate.getMinutes();
-            // console.log(newProcessDate2);
-
-            // console.log('oldProcessDate', item.processDate);
-            // console.log('newProcessDate', newProcessDate);
-            let otherProcessDate = new Date(item.processDate);
-            // console.log('otherProcessDate', otherProcessDate);
-            // oldProcessDate совпадает с newProcessDate, но они не совпадают с otherProcessDate
-
-            newDataArr.push({x: newProcessDate, y: item.balance});
+            dataset1.push({
+                x: parseTime(item.processDate),
+                y: item.balance,
+                eventStartDate: item.eventStartDate,
+                eventFinishDate: item.eventFinishDate,
+                processDate: item.processDate,
+                eventName: item.eventName,
+                amount: item.amount,
+                metricUnit: item.metricUnit,
+                cost: item.cost,
+                balance: item.balance
+            });
         });
-        return newDataArr;
 
+        dataset1 = dataset1.sort(function (a, b) {
+            return new Date(a.x) - new Date(b.x);
+        });
     };
+    prepareDataIn(rawData);
+    console.log(dataset1);
 
-    let xScale = d3.scaleLinear()
-        .domain([0, d3.max(dataset1, function (d) {//интервал значений по оси Х
+
+    let xScale = d3.scaleTime()
+        .domain(d3.extent(dataset1, function (d) {
             return d.x;
-        })])
+        }))
         .range([0, width]);//типа растянуть по ширине всей свг X и оси и график и всё
 
     let yScale = d3.scaleLinear()
@@ -283,10 +224,14 @@
             })])
         .range([height, 0]);
 
+    // x.domain(d3.extent(data, function(d) { return d.date; }));
+    // y.domain([0, d3.max(data, function(d) { return d.close; })]);
+
     let xAxis = d3.axisBottom()
         .scale(xScale)
         .tickSizeInner(0)// раньше было значение -height. 0 скрывает вертикальные линии
         .tickSizeOuter(0)
+        .tickFormat(d3.timeFormat("%Y-%m-%d"))
         .tickPadding(25);// отступ значений от оси Х TODO сюда значение = min(data.x) * scale
 
     let yAxis = d3.axisLeft()
@@ -329,17 +274,28 @@
         .attr('y1', '0')
         .attr('y2', '1');
 
-    function tooltipInner(x, y) {
+    // x: parseTime(item.processDate),
+    //     y: item.balance,
+    //     eventStartDate: item.eventStartDate,
+    //     eventFinishDate:item.eventFinishDate,
+    //     processDate: item.processDate,
+    //     eventName: item.eventName,
+    //     amount: item.amount,
+    //     metricUnit: item.metricUnit,
+    //     cost: item.cost,
+    //     balance: item.balance
+
+    function tooltipInner(d) {
         return `<div class='tooltip-inner'>
 					<div class='tooltip_date'>13.01.16, 10:35</div>
-					<div class='tooltip_title'>Добавлена услуга 'Везде как дома Россия' - 255 Р/мес.</div>
+					<div class='tooltip_title'>Добавлена услуга '${d.eventName}' - 255 Р/мес.</div>
 					<div class='tooltip_period'>
 						<div class='tooltip_period-label'>Период деяствия</div>
 						<div class='tooltip_period-value'>13.01.16 - 13.01.16</div>
 					</div>
 					<div class='tooltip_time'>25:41м.</div>
 					<div class='tooltip_balance'>Баланс:
-						<span>555</span> Р
+						<span>${d.balance}</span> Р
 					</div> 
 				</div>`;
     }
@@ -354,7 +310,8 @@
     let tip = d3.tip()
         .attr('class', 'd3-tip tooltip')
         .html(function (d) {
-            return tooltipInner();
+            console.log('d', d);
+            return tooltipInner(d);
         })
         .offset([-10, 0]);
     svg.call(tip);
@@ -491,7 +448,7 @@
     svg.call(zoom);
 
 
-    console.log('newDataArr', newDataArr);
-    console.log('dataset1', dataset1);
+    // console.log('newDataArr', newDataArr);
+    // console.log('dataset1', dataset1);
 
 })();
