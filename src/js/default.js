@@ -186,6 +186,8 @@
             let eventFinishDate = monthNameFormat(new Date(item.eventFinishDate));
             let processDate = monthNameFormat(new Date(item.processDate));
 
+            // TODO добавить словарь (?) для metricUnit
+
             dataset1.push({
                 x: parseTime(item.processDate),
                 y: item.balance,
@@ -294,7 +296,12 @@
         .attr('class', 'stop-right')
         .attr('offset', '1');
 
-    let tip = d3.tip()
+    let tip = d3.tip()//TODO tip.direction(direction)
+        .direction('n')
+        // .direction(function(d){
+        //     console.log(d.y);
+        //     return 'n' || 's'
+        // })
         .attr('class', 'd3-tip tooltip')
         .html(function (d) {
             return tooltipInner(d);
@@ -403,8 +410,8 @@
         let transform = d3.event.transform;
 
         gX.call(xAxis.scale(transform.rescaleX(xScale)));
-        gY.call(yAxis.scale(transform.rescaleY(yScale)));
-
+        // gY.call(yAxis.scale(transform.rescaleY(yScale)));//не зумить ось Y
+        // gY.call(yAxis.scale(yScale));//не зумить ось Y
         // после перерисовки осей, получаем новые данные и перестраиваем график - chart и line
 
         chart
@@ -412,15 +419,18 @@
                 return transform.applyX(xScale(d.x));
             })
             .attr('cy', function (d) {
-                return transform.applyY(yScale(d.y));
+                // return transform.applyY(yScale(d.y));//чтобы зумилось и по оси Y
+                return yScale(d.y);//чтобы не зумилось по оси  Y
             });
+
 
         let line = d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
             .x(function (d) {
                 return transform.applyX(xScale(d.x));
             })
             .y(function (d) {
-                return transform.applyY(yScale(d.y));
+                // return transform.applyY(yScale(d.y));//чтобы зумилось и по оси Y
+                return yScale(d.y);//чтобы не зумилось по оси  Y
             });
 
         area.attr('d', line);
