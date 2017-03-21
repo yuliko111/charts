@@ -29,7 +29,7 @@
         "cost": 100,
         "balance": 3215.55
     }, {
-        "eventStartDate": "2017-03-10T21:31:64Z",
+        "eventStartDate": "2017-03-10T21:31:14Z",
         "eventFinishDate": "2017-03-10T21:30:54Z",
         "processDate": "2017-03-10T21:36:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
@@ -38,7 +38,7 @@
         "cost": 2.50,
         "balance": 3213.05
     }, {
-        "eventStartDate": "2017-03-10T06:15:84Z",
+        "eventStartDate": "2017-03-10T06:15:24Z",
         "eventFinishDate": "2017-03-10T06:30:54Z",
         "processDate": "2017-03-10T06:30:49Z",
         "eventName": "Связь. Входящая (_Сотовые операторы)",
@@ -47,7 +47,7 @@
         "cost": 0,
         "balance": 3213.05
     }, {
-        "eventStartDate": "2017-03-10T06:30:84Z",
+        "eventStartDate": "2017-03-10T06:30:24Z",
         "eventFinishDate": "2017-03-10T06:31:54Z",
         "processDate": "2017-03-10T06:31:49Z",
         "eventName": "Связь. Входящая (_Сотовые операторы)",
@@ -66,7 +66,7 @@
         "balance": 3255.55
     }, {
         "eventStartDate": "2017-03-10T10:55:59Z",
-        "eventFinishDate": "2017-03-10T10:57:89Z",
+        "eventFinishDate": "2017-03-10T10:57:49Z",
         "processDate": "2017-03-10T10:57:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 2,
@@ -75,7 +75,7 @@
         "balance": 3206.55
     }, {
         "eventStartDate": "2017-03-10T16:05:54Z",
-        "eventFinishDate": "2017-03-10T16:07:89Z",
+        "eventFinishDate": "2017-03-10T16:07:49Z",
         "processDate": "2017-03-10T16:08:49Z",
         "eventName": "Связь. Исходящая (_Международная, СНГ)",
         "amount": 4,
@@ -179,19 +179,19 @@
     let dataset1 = [];
     let prepareDataIn = function (dataIn) {
         dataIn.forEach(function (item) {
-            // let newProcessDate = new Date(item.processDate);
             // console.log('newProcessDate', newProcessDate);//TODO время на 3 часа больше исходного - разобраться
 
-            let eventStartDate = new Date(item.eventStartDate);
-            var monthNameFormat = d3.timeFormat("%b-%Y");
-            console.log(monthNameFormat(new Date(item.eventStartDate)), '---', item.eventStartDate);
+            let monthNameFormat = d3.timeFormat("%d.%m.%y, %H:%M");
+            let eventStartDate = monthNameFormat(new Date(item.eventStartDate));
+            let eventFinishDate = monthNameFormat(new Date(item.eventFinishDate));
+            let processDate = monthNameFormat(new Date(item.processDate));
 
             dataset1.push({
                 x: parseTime(item.processDate),
                 y: item.balance,
-                eventStartDate: item.eventStartDate,
-                eventFinishDate: item.eventFinishDate,
-                processDate: item.processDate,
+                eventStartDate: eventStartDate,
+                eventFinishDate: eventFinishDate,
+                processDate: processDate,
                 eventName: item.eventName,
                 amount: item.amount,
                 metricUnit: item.metricUnit,
@@ -212,7 +212,7 @@
         .domain(d3.extent(dataset1, function (d) {
             return d.x;
         }))
-        .range([0, width]);//типа растянуть по ширине всей свг X и оси и график и всё
+        .range([0, width]);// растянуть по ширине всей свг X и оси и график и всё
 
     let yScale = d3.scaleLinear()
         .domain([
@@ -224,24 +224,21 @@
             })])
         .range([height, 0]);
 
-    // x.domain(d3.extent(data, function(d) { return d.date; }));
-    // y.domain([0, d3.max(data, function(d) { return d.close; })]);
-
     let xAxis = d3.axisBottom()
         .scale(xScale)
         .tickSizeInner(0)// раньше было значение -height. 0 скрывает вертикальные линии
         .tickSizeOuter(0)
-        .tickFormat(d3.timeFormat("%Y-%m-%d"))
-        .tickPadding(25);// отступ значений от оси Х TODO сюда значение = min(data.x) * scale
+        .tickFormat(d3.timeFormat("%d.%m"))
+        .tickPadding(15);// отступ значений от оси Х
 
     let yAxis = d3.axisLeft()
         .ticks(10)//разбиение, то есть какой интервал между двумя осями
         .scale(yScale)
-        .tickSizeInner(-width)
-        .tickSizeOuter(0)
-        .tickPadding(25);
+        .tickSizeInner(-width)// отображение горизонтальных линий вправо от оси У
+        .tickSizeOuter(0)// не понимаю на что влияет
+        .tickPadding(25);// отступ слева до тиков от левой оси
 
-    let line = d3.line()// как я понимаю на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ... , то есть
+    let line = d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
         .x(function (d) {
             return xScale(d.x);
         })
@@ -265,6 +262,7 @@
         .attr('y', 0)
         .attr('width', width)
         .attr('height', height)
+        .attr('pointer-events', 'all')
         .attr('fill', '#fff');
 
     let mainGradient = svgDefs.append('linearGradient')
@@ -274,26 +272,15 @@
         .attr('y1', '0')
         .attr('y2', '1');
 
-    // x: parseTime(item.processDate),
-    //     y: item.balance,
-    //     eventStartDate: item.eventStartDate,
-    //     eventFinishDate:item.eventFinishDate,
-    //     processDate: item.processDate,
-    //     eventName: item.eventName,
-    //     amount: item.amount,
-    //     metricUnit: item.metricUnit,
-    //     cost: item.cost,
-    //     balance: item.balance
-
     function tooltipInner(d) {
         return `<div class='tooltip-inner'>
-					<div class='tooltip_date'>13.01.16, 10:35</div>
-					<div class='tooltip_title'>Добавлена услуга '${d.eventName}' - 255 Р/мес.</div>
+					<div class='tooltip_date'>${d.processDate}</div>
+					<div class='tooltip_title'>Добавлена услуга "${d.eventName}" - ${d.cost} Р/мес.</div>
 					<div class='tooltip_period'>
 						<div class='tooltip_period-label'>Период деяствия</div>
-						<div class='tooltip_period-value'>13.01.16 - 13.01.16</div>
+						<div class='tooltip_period-value'>${d.eventStartDate} - ${d.eventFinishDate}</div>
 					</div>
-					<div class='tooltip_time'>25:41м.</div>
+					<div class='tooltip_time'>${d.amount} м.</div>
 					<div class='tooltip_balance'>Баланс:
 						<span>${d.balance}</span> Р
 					</div> 
@@ -310,7 +297,6 @@
     let tip = d3.tip()
         .attr('class', 'd3-tip tooltip')
         .html(function (d) {
-            console.log('d', d);
             return tooltipInner(d);
         })
         .offset([-10, 0]);
@@ -341,22 +327,28 @@
     };
 
     let prepareDataAxis = function () {
-        let minValY = d3.min(dataset1, function (d) {//интервал значений по оси Х
+        let minValY = d3.min(dataset1, function (d) {//интервал значений по оси Y
             return d.y;
         });
-        let maxValX = d3.max(dataset1, function (d) {//интервал значений по оси Х
+        let maxValX = d3.max(dataset1, function (d) {//интервал значений по оси X
             return d.x;
         });
-        dataset1.unshift({x: 0, y: minValY, disabled: true});
+        dataset1.unshift({x: 0, y: minValY, disabled: true});//TODO !!!
         dataset1.push({x: maxValX, y: minValY, disabled: true});
     };
 
     // график в точках
     let buildChart = function () {
+        // let viewBoxSize = '0 0' + ' ' + width + ' ' + height;//TODO некрасиво написано
 
         chart = svg
             .append('svg')
             .attr('class', 'chart-area')
+            // .attr('viewBox', viewBoxSize)
+            // .attr('x', 0)
+            // .attr('y', 0)
+            // .attr('width', width)
+            // .attr('height', height)
             .selectAll('.dot')
             .data(dataset1.filter(function (item) {
                 return !item.disabled;
@@ -393,7 +385,7 @@
             .attr('fill', '#000')
             .attr('d', line);
 
-        // .transition() // Wait one second. Then brown, and remove.
+        // .transition() // Анимация. Wait one second. Then brown, and remove.
         //     .ease(d3.easeElastic)
         //     .delay(1000)
         //     .style("fill", "brown");
@@ -413,6 +405,8 @@
         gX.call(xAxis.scale(transform.rescaleX(xScale)));
         gY.call(yAxis.scale(transform.rescaleY(yScale)));
 
+        // после перерисовки осей, получаем новые данные и перестраиваем график - chart и line
+
         chart
             .attr('cx', function (d) {
                 return transform.applyX(xScale(d.x));
@@ -421,7 +415,7 @@
                 return transform.applyY(yScale(d.y));
             });
 
-        let line = d3.line()// как я понимаю на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ... , то есть
+        let line = d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
             .x(function (d) {
                 return transform.applyX(xScale(d.x));
             })
@@ -430,12 +424,7 @@
             });
 
         area.attr('d', line);
-
-
-        // TODO после перерисовки осей, получать новые даныне и перестраивать график
-
     }
-
 
     prepareDataAxis();
     buildOsX();
@@ -443,12 +432,7 @@
     buildChart();
     buildArea();
 
-
     svg.call(zoom.transform, d3.zoomIdentity);
     svg.call(zoom);
-
-
-    // console.log('newDataArr', newDataArr);
-    // console.log('dataset1', dataset1);
 
 })();
