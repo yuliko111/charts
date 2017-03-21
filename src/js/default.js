@@ -339,16 +339,16 @@
 
     // график в точках
     let buildChart = function () {
-        // let viewBoxSize = '0 0' + ' ' + width + ' ' + height;//TODO некрасиво написано
+        let viewBoxSize = '0 0' + ' ' + width + ' ' + height;//TODO некрасиво написано
 
         chart = svg
             .append('svg')
             .attr('class', 'chart-area')
-            // .attr('viewBox', viewBoxSize)
-            // .attr('x', 0)
-            // .attr('y', 0)
-            // .attr('width', width)
-            // .attr('height', height)
+            .attr('viewBox', viewBoxSize)
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', width)
+            .attr('height', height)
             .selectAll('.dot')
             .data(dataset1.filter(function (item) {
                 return !item.disabled;
