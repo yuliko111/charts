@@ -31,18 +31,6 @@ p {
 	color: #494949;
 }
 
-.content {
-	position: relative;
-	margin: 40px 60px;
-	width: 960px;
-	height: 500px;
-	background: #d2d2d2;
-}
-
-.main-chart {
-	position: absolute;
-}
-
 .axis path,
 .axis line {
 	fill: none;
@@ -171,4 +159,57 @@ p {
 		font: 400 14px/16px $font-fam;
 		letter-spacing: 0.4px;
 	}
+}
+
+//.content {
+//	position: relative;
+//	margin: 40px 60px;
+//	width: 960px;
+//	height: 500px;
+//	background: #d2d2d2;
+//}
+
+.main-chart { //is svg
+	position: absolute;
+}
+// ----- //
+.main-content {
+	width: 100%;
+}
+
+.charts-wrap {
+	display: flex;
+}
+
+.chart-balance {
+	position: relative;
+	margin: 40px 60px;
+	//width: 960px;
+	width: auto;
+	height: 500px;
+	background: #d2d2d2;
+}
+
+.chart-traffic {
+	width: 30%;
+	height: 320px;
+	background: #ffff99;
+	position: relative;
+	margin: 20px;
+}
+
+.chart-minutes {
+	width: 30%;
+	height: 320px;
+	background: cornsilk;
+	position: relative;
+	margin: 20px;
+}
+
+.chart-sms {
+	width: 30%;
+	height: 320px;
+	background: darkseagreen;
+	position: relative;
+	margin: 20px;
 }
