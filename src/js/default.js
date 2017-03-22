@@ -112,10 +112,10 @@
         let yScale = d3.scaleLinear()
             .domain([
                 d3.min(dataset1, function (d) {
-                    return d.y;
+                    return d.y - 1000;//TODO
                 }),
                 d3.max(dataset1, function (d) {
-                    return d.y;
+                    return d.y + 1000;//TODO
                 })])
             .range([height, 0]);
 
@@ -189,12 +189,15 @@
             .attr('class', 'stop-right')
             .attr('offset', '1');
 
+        let tipId = 'tip'+Date.now();
         let tip = d3.tip()//TODO tip.direction(direction)
-            .direction('n')
-            // .direction(function(d){
-            //     console.log(d.y);
-            //     return 'n' || 's'
-            // })
+            .direction(function(d){
+                let tipNode = document.querySelector('#' + tipId);
+
+                console.log(tipNode);
+                return 'n' || 's'
+            })
+            .attr('id', tipId)
             .attr('class', 'd3-tip tooltip')
             .html(function (d) {
 
@@ -364,7 +367,7 @@
         "eventStartDate": "2017-03-10T21:31:14Z",
         "eventFinishDate": "2017-03-10T21:30:54Z",
         "processDate": "2017-03-10T21:36:49Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "1 Связь. Исходящая (_Международная, СНГ)",
         "amount": 9,
         "metricUnit": 4,
         "cost": 2.50,
@@ -373,7 +376,7 @@
         "eventStartDate": "2017-03-10T06:15:24Z",
         "eventFinishDate": "2017-03-10T06:30:54Z",
         "processDate": "2017-03-10T06:30:49Z",
-        "eventName": "Связь. Входящая (_Сотовые операторы)",
+        "eventName": "2 Связь. Входящая (_Сотовые операторы)",
         "amount": 15,
         "metricUnit": 4,
         "cost": 0,
@@ -382,7 +385,7 @@
         "eventStartDate": "2017-03-10T06:30:24Z",
         "eventFinishDate": "2017-03-10T06:31:54Z",
         "processDate": "2017-03-10T06:31:49Z",
-        "eventName": "Связь. Входящая (_Сотовые операторы)",
+        "eventName": "3 Связь. Входящая (_Сотовые операторы)",
         "amount": 1,
         "metricUnit": 4,
         "cost": 0,
