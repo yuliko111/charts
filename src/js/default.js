@@ -2,7 +2,9 @@
 (function () {
     let buildChart = function (data, typeChart, nameChart) {
 
-        let options, chartNode;
+        let options, chartNodeClass;
+        let chart, area;
+        let rawData = data;
 
         switch (typeChart) {
             case 'balanceChart':
@@ -14,7 +16,7 @@
                     axisX: true,
                     tooltip: true
                 };
-                chartNode = '.chart-balance';
+                chartNodeClass = '.chart-balance';
                 break;
             case 'accumulatorChart':
                 options = {
@@ -29,21 +31,21 @@
                             title: 'Трафик',
                             units: 'Gb' // or Mb
                         };
-                        chartNode = '.chart-traffic';
+                        chartNodeClass = '.chart-traffic';
                         break;
                     case 'minutes':
                         options = {
                             title: 'Минуты',
                             units: 'мин.'
                         };
-                        chartNode = '.chart-minutes';
+                        chartNodeClass = '.chart-minutes';
                         break;
                     case 'sms':
                         options = {
                             title: 'СМС',
                             units: 'шт.'
                         };
-                        chartNode = '.chart-sms';
+                        chartNodeClass = '.chart-sms';
                         break;
                     default:
                         console.log('I don`t know 1!!!');
@@ -54,18 +56,14 @@
         }
 
 
-        let baseNode = chartNode;
-        // let parentNode = parentNode;
-        let baseNodeWidth = parseInt(window.getComputedStyle(document.querySelector(baseNode)).width);
-        let baseNodeHeigth = parseInt(window.getComputedStyle(document.querySelector(baseNode)).height);
+        let baseNodeClass = chartNodeClass;
+        let baseNode = document.querySelector(baseNodeClass);
+        let baseNodeWidth = parseInt(window.getComputedStyle(baseNode).width);
+        let baseNodeHeigth = parseInt(window.getComputedStyle(baseNode).height);
 
         let margin = {top: 20, right: 100, bottom: 30, left: 100};
         let width = baseNodeWidth - margin.left - margin.right;
         let height = baseNodeHeigth - margin.top - margin.bottom;
-
-        let chart, area;
-
-        let rawData = data;
 
         let parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
 
@@ -100,7 +98,6 @@
             });
         };
         prepareDataIn(rawData);
-        console.log(dataset1);
 
 
         let xScale = d3.scaleTime()
@@ -112,10 +109,10 @@
         let yScale = d3.scaleLinear()
             .domain([
                 d3.min(dataset1, function (d) {
-                    return d.y - 1000;//TODO
+                    return d.y - 500;//TODO
                 }),
                 d3.max(dataset1, function (d) {
-                    return d.y + 1000;//TODO
+                    return d.y + 500;//TODO
                 })])
             .range([height, 0]);
 
@@ -141,7 +138,7 @@
                 return yScale(d.y);
             });
 
-        let svg = d3.select(baseNode).append('svg')
+        let svg = d3.select(baseNodeClass).append('svg')
             .attr('class', 'main-chart')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
@@ -189,23 +186,31 @@
             .attr('class', 'stop-right')
             .attr('offset', '1');
 
-        let tipId = 'tip'+Date.now();
-        let tip = d3.tip()//TODO tip.direction(direction)
-            .direction(function(d){
-                let tipNode = document.querySelector('#' + tipId);
-
-                console.log(tipNode);
-                return 'n' || 's'
-            })
+        let tipId = 'tip' + Date.now();
+        let tip = d3.tip()
             .attr('id', tipId)
             .attr('class', 'd3-tip tooltip')
             .html(function (d) {
-
-
-                return tooltipInner(d);//TODO
+                return tooltipInner(d);
             })
-            .offset([-10, 0]);
+            .offset([-10, 0])
+            .direction(function (d) {//TODO в первой итерации высота тултипа неправильно считается
+                let tipNode = document.querySelector('#' + tipId);
+                let tipHeigth = tipNode.getBoundingClientRect().top - tipNode.getBoundingClientRect().bottom;
+                let parentPosTop = this.closest('.main-chart g').getBoundingClientRect().top;
+                let dotPosTop = this.getBoundingClientRect().top;
+
+                if ((dotPosTop - parentPosTop) < -tipHeigth) {
+                    console.log((dotPosTop - parentPosTop) + '<' + -tipHeigth);
+                    return 's';
+                } else {
+                    console.log((dotPosTop - parentPosTop) + '>' + -tipHeigth);
+                    return 'n';
+                }
+            });
+
         svg.call(tip);
+
 
         let gY, gX;
         // вертикальные линии сетки, кроме первой и ось Х
@@ -248,7 +253,7 @@
 
             chart = svg
                 .append('svg')
-                .attr('class', 'chart-area')
+                .attr('class', 'svg-chart-area')
                 .attr('viewBox', viewBoxSize)
                 .attr('x', 0)
                 .attr('y', 0)
@@ -310,6 +315,7 @@
             gX.call(xAxis.scale(transform.rescaleX(xScale)));
             // gY.call(yAxis.scale(transform.rescaleY(yScale)));//не зумить ось Y
             // gY.call(yAxis.scale(yScale));//не зумить ось Y
+
             // после перерисовки осей, получаем новые данные и перестраиваем график - chart и line
 
             chart
@@ -340,10 +346,62 @@
         buildChart();
         buildArea();
 
+        if (typeChart !== 'accumulatorChart') {
+            console.log('это НЕ аккумулятор');
+        } else {
+            console.log('это аккумулятор');
+        }
+
         svg.call(zoom.transform, d3.zoomIdentity);
         svg.call(zoom);
 
     };
+
+    let dataTraffic = [{
+        "counterName": "Ultra3700",
+        "changes": [{
+            "processDate": "2017-03-10T08:33:43Z",
+            "initialValue": 100,
+            "amount": 3,
+            "balance": 20,
+        }, {
+            "processDate": "2017-03-10T08:49:43Z",
+            "initialValue": 100,
+            "amount": 2,
+            "balance": 22,
+        }, {
+            "processDate": "2017-03-10T14:29:43Z",
+            "initialValue": 100,
+            "amount": 6,
+            "balance": 28,
+        }, {
+            "processDate": "2017-03-11T12:09:43Z",
+            "initialValue": 100,
+            "amount": 4,
+            "balance": 32,
+        }, {
+            "processDate": "2017-03-11T14:57:43Z",
+            "initialValue": 100,
+            "amount": 1,
+            "balance": 33,
+        }, {
+            "processDate": "2017-03-11T16:54:43Z",
+            "initialValue": 100,
+            "amount": 10,
+            "balance": 43,
+        }, {
+            "processDate": "2017-03-12T11:14:43Z",
+            "initialValue": 100,
+            "amount": 6,
+            "balance": 49,
+        }, {
+            "processDate": "2017-03-12T11:15:43Z",
+            "initialValue": 100,
+            "amount": 2,
+            "balance": 51,
+        }
+        ]
+    }];
 
     let dataBalance = [{
         "eventStartDate": "2017-03-10T08:32:43Z",
@@ -511,8 +569,33 @@
 
     // buildChart(data, chartNode, parentNode, params)
     buildChart(dataBalance, 'balanceChart');
-    buildChart(dataBalance, 'accumulatorChart', 'traffic');
+    // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
     buildChart(dataBalance, 'accumulatorChart', 'minutes');
     buildChart(dataBalance, 'accumulatorChart', 'sms');
+
+    window.onresize = function (event) {
+        let charts = document.querySelectorAll('.chart-area');
+        let chart = document.querySelector('.chart-area');
+
+        for (let i = 0; i <= charts.length; i++) {
+            // console.log('charts[i]', charts[i].classList.contains(''));
+            // if (charts[i].classList.contains('chart-traffic')) {
+                // charts[i].innerHTML = '';
+                // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
+            // }
+            if (charts[i].classList.contains('chart-minutes')) {
+                charts[i].innerHTML = '';
+                buildChart(dataBalance, 'accumulatorChart', 'minutes');
+            }
+            if (charts[i].classList.contains('chart-sms')) {
+                charts[i].innerHTML = '';
+                buildChart(dataBalance, 'accumulatorChart', 'sms');
+            }
+        }
+
+        buildChart(dataBalance, 'balanceChart');
+
+
+    };
 
 })();
