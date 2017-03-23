@@ -93,7 +93,12 @@
                 });
             });
 
+            let yMin, yMax;
             dataset1 = dataset1.sort(function (a, b) {
+                yMin = a;
+                yMin = a;
+                console.log(yMin);
+                console.log(yMin);
                 return new Date(a.x) - new Date(b.x);
             });
         };
@@ -106,13 +111,16 @@
             }))
             .range([0, width]);// растянуть по ширине всей свг X и оси и график и всё
 
+        let k;// коэффициент для запаса по Y
         let yScale = d3.scaleLinear()
             .domain([
                 d3.min(dataset1, function (d) {
-                    return d.y - 500;//TODO
+                    k = d.y / 80;
+                    return d.y - k;
                 }),
                 d3.max(dataset1, function (d) {
-                    return d.y + 500;//TODO
+                    k = d.y / 80;
+                    return d.y + k;
                 })])
             .range([height, 0]);
 
@@ -580,8 +588,8 @@
         for (let i = 0; i <= charts.length; i++) {
             // console.log('charts[i]', charts[i].classList.contains(''));
             // if (charts[i].classList.contains('chart-traffic')) {
-                // charts[i].innerHTML = '';
-                // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
+            // charts[i].innerHTML = '';
+            // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
             // }
             if (charts[i].classList.contains('chart-minutes')) {
                 charts[i].innerHTML = '';
