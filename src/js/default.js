@@ -363,6 +363,33 @@
         svg.call(zoom.transform, d3.zoomIdentity);
         svg.call(zoom);
 
+        return {
+            destroy: function() {
+                let tip = document.querySelector('#' + tipId);
+
+                if (tip) {
+                    tip.parentNode.removeChild(tip);
+                }
+                baseNode.innerHTML = '';
+            }
+        };
+
+    };
+
+    // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
+    let balanceChart = buildChart(dataBalance, 'balanceChart');
+    let minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
+    let smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
+
+
+    window.onresize = function (event) {
+        balanceChart.destroy();
+        minutesChart.destroy();
+        smsChart.destroy();
+
+        balanceChart = buildChart(dataBalance, 'balanceChart');
+        minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
+        smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
     };
 
     let dataTraffic = [{
@@ -574,36 +601,5 @@
         "cost": 1.3,
         "balance": 9.98
     }];
-
-    // buildChart(data, chartNode, parentNode, params)
-    buildChart(dataBalance, 'balanceChart');
-    // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
-    buildChart(dataBalance, 'accumulatorChart', 'minutes');
-    buildChart(dataBalance, 'accumulatorChart', 'sms');
-
-    window.onresize = function (event) {
-        let charts = document.querySelectorAll('.chart-area');
-        let chart = document.querySelector('.chart-area');
-
-        for (let i = 0; i <= charts.length; i++) {
-            // console.log('charts[i]', charts[i].classList.contains(''));
-            // if (charts[i].classList.contains('chart-traffic')) {
-            // charts[i].innerHTML = '';
-            // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
-            // }
-            if (charts[i].classList.contains('chart-minutes')) {
-                charts[i].innerHTML = '';
-                buildChart(dataBalance, 'accumulatorChart', 'minutes');
-            }
-            if (charts[i].classList.contains('chart-sms')) {
-                charts[i].innerHTML = '';
-                buildChart(dataBalance, 'accumulatorChart', 'sms');
-            }
-        }
-
-        buildChart(dataBalance, 'balanceChart');
-
-
-    };
 
 })();
