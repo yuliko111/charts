@@ -104,6 +104,24 @@
         };
         prepareDataIn(rawData);
 
+        let minValY, maxValY, minValX, maxValX, minY, maxY;
+        let prepareDataAxis = function () {
+            minValY = d3.min(dataset1, function (d) {//интервал значений по оси Y
+                return minY = d.y;
+            });
+            maxValY = d3.max(dataset1, function (d) {//интервал значений по оси Y
+                return maxY = d.y;
+            });
+            minValX = d3.min(dataset1, function (d) {//интервал значений по оси X
+                return d.x;
+            });
+            maxValX = d3.max(dataset1, function (d) {//интервал значений по оси X
+                return d.x;
+            });
+            dataset1.unshift({x: minValX, y: minValY, disabled: true});//TODO !!! вместо minValX раньше был 0. minValX делает чтобы пр большом зуме не пропадала область, но тогда появляется сдвиг
+            dataset1.push({x: maxValX, y: minValY, disabled: true});
+        };
+
 
         let xScale = d3.scaleTime()
             .domain(d3.extent(dataset1, function (d) {
@@ -111,16 +129,20 @@
             }))
             .range([0, width]);// растянуть по ширине всей свг X и оси и график и всё
 
-        let k;// коэффициент для запаса по Y
+        let kPadding;// коэффициент для запаса по Y
+        kPadding = (d3.max(dataset1, function (d) {
+                return d.y
+            }) - d3.min(dataset1, function (d) {
+                return d.y
+            })) / 10;
+        console.log('коэфф. = ', kPadding);
         let yScale = d3.scaleLinear()
             .domain([
                 d3.min(dataset1, function (d) {
-                    k = d.y / 80;
-                    return d.y - k;
+                    return d.y - kPadding;
                 }),
                 d3.max(dataset1, function (d) {
-                    k = d.y / 80;
-                    return d.y + k;
+                    return d.y + kPadding;
                 })])
             .range([height, 0]);
 
@@ -244,17 +266,6 @@
 
         };
 
-        let prepareDataAxis = function () {
-            let minValY = d3.min(dataset1, function (d) {//интервал значений по оси Y
-                return d.y;
-            });
-            let maxValX = d3.max(dataset1, function (d) {//интервал значений по оси X
-                return d.x;
-            });
-            dataset1.unshift({x: 0, y: minValY, disabled: true});//TODO !!!
-            dataset1.push({x: maxValX, y: minValY, disabled: true});
-        };
-
         // график в точках
         let buildChart = function () {
             let viewBoxSize = '0 0' + ' ' + width + ' ' + height;//TODO некрасиво написано
@@ -364,7 +375,7 @@
         svg.call(zoom);
 
         return {
-            destroy: function() {
+            destroy: function () {
                 let tip = document.querySelector('#' + tipId);
 
                 if (tip) {
@@ -374,22 +385,6 @@
             }
         };
 
-    };
-
-    // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
-    let balanceChart = buildChart(dataBalance, 'balanceChart');
-    let minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
-    let smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
-
-
-    window.onresize = function (event) {
-        balanceChart.destroy();
-        minutesChart.destroy();
-        smsChart.destroy();
-
-        balanceChart = buildChart(dataBalance, 'balanceChart');
-        minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
-        smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
     };
 
     let dataTraffic = [{
@@ -442,7 +437,7 @@
         "eventStartDate": "2017-03-10T08:32:43Z",
         "eventFinishDate": "2017-03-10T08:34:43Z",
         "processDate": "2017-03-10T08:47:43Z",
-        "eventName": "Связь. Исходящая (_Сотовые операторы)",
+        "eventName": "0 Связь. Исходящая (_Сотовые операторы)",
         "amount": 20,
         "metricUnit": 4,
         "cost": 3,
@@ -451,7 +446,7 @@
         "eventStartDate": "2017-03-10T12:06:49Z",
         "eventFinishDate": "2017-03-10T12:06:49Z",
         "processDate": "2017-03-10T12:08:49Z",
-        "eventName": "Пополнение баланса",
+        "eventName": "1 Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 100,
@@ -460,7 +455,7 @@
         "eventStartDate": "2017-03-10T21:31:14Z",
         "eventFinishDate": "2017-03-10T21:30:54Z",
         "processDate": "2017-03-10T21:36:49Z",
-        "eventName": "1 Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "2 Связь. Исходящая (_Международная, СНГ)",
         "amount": 9,
         "metricUnit": 4,
         "cost": 2.50,
@@ -469,7 +464,7 @@
         "eventStartDate": "2017-03-10T06:15:24Z",
         "eventFinishDate": "2017-03-10T06:30:54Z",
         "processDate": "2017-03-10T06:30:49Z",
-        "eventName": "2 Связь. Входящая (_Сотовые операторы)",
+        "eventName": "3 Связь. Входящая (_Сотовые операторы)",
         "amount": 15,
         "metricUnit": 4,
         "cost": 0,
@@ -478,7 +473,7 @@
         "eventStartDate": "2017-03-10T06:30:24Z",
         "eventFinishDate": "2017-03-10T06:31:54Z",
         "processDate": "2017-03-10T06:31:49Z",
-        "eventName": "3 Связь. Входящая (_Сотовые операторы)",
+        "eventName": "4 Связь. Входящая (_Сотовые операторы)",
         "amount": 1,
         "metricUnit": 4,
         "cost": 0,
@@ -487,7 +482,7 @@
         "eventStartDate": "2017-03-10T10:53:59Z",
         "eventFinishDate": "2017-03-10T10:53:59Z",
         "processDate": "2017-03-10T10:53:49Z",
-        "eventName": "Пополнение баланса",
+        "eventName": "5 Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 50,
@@ -496,7 +491,7 @@
         "eventStartDate": "2017-03-10T10:55:59Z",
         "eventFinishDate": "2017-03-10T10:57:49Z",
         "processDate": "2017-03-10T10:57:49Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "6 Связь. Исходящая (_Международная, СНГ)",
         "amount": 2,
         "metricUnit": 4,
         "cost": 6.50,
@@ -505,7 +500,7 @@
         "eventStartDate": "2017-03-10T16:05:54Z",
         "eventFinishDate": "2017-03-10T16:07:49Z",
         "processDate": "2017-03-10T16:08:49Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "7 Связь. Исходящая (_Международная, СНГ)",
         "amount": 4,
         "metricUnit": 4,
         "cost": 4.90,
@@ -514,7 +509,7 @@
         "eventStartDate": "2017-03-10T23:05:54Z",
         "eventFinishDate": "2017-03-10T23:05:59Z",
         "processDate": "2017-03-10T23:05:49Z",
-        "eventName": "SMS. Исходящая",
+        "eventName": "8 SMS. Исходящая",
         "amount": 1,
         "metricUnit": 4,
         "cost": 3,
@@ -523,7 +518,7 @@
         "eventStartDate": "2017-03-11T00:01:59Z",
         "eventFinishDate": "2017-03-11T00:01:59Z",
         "processDate": "2017-03-11T00:02:59Z",
-        "eventName": "SMS. Входящая",
+        "eventName": "9 SMS. Входящая",
         "amount": 1,
         "metricUnit": 4,
         "cost": 0,
@@ -532,7 +527,7 @@
         "eventStartDate": "2017-03-11T01:06:54Z",
         "eventFinishDate": "2017-03-11T01:12:54Z",
         "processDate": "2017-03-11T01:13:49Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "10 Связь. Исходящая (_Международная, СНГ)",
         "amount": 6,
         "metricUnit": 4,
         "cost": 5,
@@ -541,7 +536,7 @@
         "eventStartDate": "2017-03-11T14:32:54Z",
         "eventFinishDate": "2017-03-11T14:32:54Z",
         "processDate": "2017-03-11T14:32:49Z",
-        "eventName": "Пополнение баланса",
+        "eventName": "11 Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 25,
@@ -550,7 +545,7 @@
         "eventStartDate": "2017-03-11T16:57:54Z",
         "eventFinishDate": "2017-03-11T17:19:54Z",
         "processDate": "2017-03-11T17:19:49Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "12 Связь. Исходящая (_Международная, СНГ)",
         "amount": 22,
         "metricUnit": 4,
         "cost": 87,
@@ -559,7 +554,7 @@
         "eventStartDate": "2017-03-11T20:07:54Z",
         "eventFinishDate": "2017-03-11T21:57:54Z",
         "processDate": "2017-03-11T17:19:59Z",
-        "eventName": "GPRS",
+        "eventName": "13 GPRS",
         "amount": 114,
         "metricUnit": 4,
         "cost": 3601.14,
@@ -568,7 +563,7 @@
         "eventStartDate": "2017-03-11T22:09:54Z",
         "eventFinishDate": "2017-03-11T22:12:54Z",
         "processDate": "2017-03-11T22:13:54Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "14 Связь. Исходящая (_Международная, СНГ)",
         "amount": 4,
         "metricUnit": 4,
         "cost": 17.4,
@@ -577,7 +572,7 @@
         "eventStartDate": "2017-03-11T22:34:54Z",
         "eventFinishDate": "2017-03-11T22:36:54Z",
         "processDate": "2017-03-11T22:36:59Z",
-        "eventName": "Связь. Исходящая (_Международная, СНГ)",
+        "eventName": "15 Связь. Исходящая (_Международная, СНГ)",
         "amount": 2,
         "metricUnit": 4,
         "cost": 7.3,
@@ -586,7 +581,7 @@
         "eventStartDate": "2017-03-12T10:32:54Z",
         "eventFinishDate": "2017-03-12T10:32:54Z",
         "processDate": "2017-03-12T10:32:54Z",
-        "eventName": "Пополнение баланса",
+        "eventName": "16 Пополнение баланса",
         "amount": 1,
         "metricUnit": 1,
         "cost": 500,
@@ -595,11 +590,27 @@
         "eventStartDate": "2017-03-12T11:03:54Z",
         "eventFinishDate": "2017-03-12T11:10:54Z",
         "processDate": "2017-03-12T11:10:54Z",
-        "eventName": "Связь. Входящая (_Сотовые операторы)",
+        "eventName": "17 - Связь. Входящая (_Сотовые операторы)",
         "amount": 2,
         "metricUnit": 4,
         "cost": 1.3,
         "balance": 9.98
     }];
+
+    // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
+    let balanceChart = buildChart(dataBalance, 'balanceChart');
+    let minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
+    let smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
+
+
+    window.onresize = function (event) {
+        balanceChart.destroy();
+        minutesChart.destroy();
+        smsChart.destroy();
+
+        balanceChart = buildChart(dataBalance, 'balanceChart');
+        minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
+        smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
+    };
 
 })();
