@@ -58,6 +58,10 @@
 
         let baseNodeClass = chartNodeClass;
         let baseNode = document.querySelector(baseNodeClass);
+
+        //очистка старого графика если он был
+        baseNode.innerHTML = '';
+
         let baseNodeWidth = parseInt(window.getComputedStyle(baseNode).width);
         let baseNodeHeigth = parseInt(window.getComputedStyle(baseNode).height);
 
