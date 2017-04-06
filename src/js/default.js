@@ -618,4 +618,74 @@
         smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
     };
 
+
+    /* --------- */
+
+
+    let steps = [{
+        code: 'step1',
+        name: 'Шаг 1',
+        active: true
+    }, {
+        code: 'step2',
+        name: 'Шаг 2',
+        active: true
+    }, {
+        code: 'step3',
+        name: 'Шаг 3',
+        active: true
+    }, {
+        code: 'step4',
+        name: 'шаг 4',
+        active: false
+    }, {
+        code: 'step5',
+        name: 'шаг 5',
+        active: false
+    }, {
+        code: 'step6',
+        name: 'шаг 6',
+        active: false
+    }, {
+        code: 'step7',
+        name: 'шаг 7',
+        active: false
+    }, {
+        code: 'step8',
+        name: 'шаг 8',
+        active: false
+    }];
+
+    console.log('steps', steps);
+
+    function templateStep(step, number) {
+        let tmpl = '';
+
+        if (step.active == true) {
+            tmpl += `<div class='wizard-steps__item' w-step-id='${step.code}'>`;
+        } else {
+            tmpl += `<div class='wizard-steps__item wizard-steps__item_disable' w-step-id='${step.code}'>`;
+        }
+        tmpl += `<div class="wizard-steps__item-circle">`;
+        if (step.active == true) {
+            tmpl += `<i class="i-material">check</i>`;
+        } else {
+            tmpl += `<div class="wizard-steps__item-circle-number">${number}</div>`;
+        }
+        tmpl += `</div>`;
+        tmpl += `</div>`;
+
+        return tmpl;
+    }
+
+    function renderSteps(steps) {
+        let parentNode = $('.wizard-steps');
+
+        $.each(steps, function (i, item) {
+            parentNode.append(templateStep(item, i));
+        });
+    }
+
+    renderSteps(steps);
+    /* --------- */
 })();
