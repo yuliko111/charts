@@ -48,11 +48,11 @@
                         chartNodeClass = '.chart-sms';
                         break;
                     default:
-                        console.log('I don`t know 1!!!');
+                    // console.log('I don`t know 1!!!');
                 }
                 break;
             default:
-                console.log('I don`t know 2!!!');
+            // console.log('I don`t know 2!!!');
         }
 
 
@@ -101,8 +101,8 @@
             dataset1 = dataset1.sort(function (a, b) {
                 yMin = a;
                 yMin = a;
-                console.log(yMin);
-                console.log(yMin);
+                // console.log(yMin);
+                // console.log(yMin);
                 return new Date(a.x) - new Date(b.x);
             });
         };
@@ -139,7 +139,7 @@
             }) - d3.min(dataset1, function (d) {
                 return d.y
             })) / 10;
-        console.log('коэфф. = ', kPadding);
+        // console.log('коэфф. = ', kPadding);
         let yScale = d3.scaleLinear()
             .domain([
                 d3.min(dataset1, function (d) {
@@ -235,10 +235,10 @@
                 let dotPosTop = this.getBoundingClientRect().top;
 
                 if ((dotPosTop - parentPosTop) < -tipHeigth) {
-                    console.log((dotPosTop - parentPosTop) + '<' + -tipHeigth);
+                    // console.log((dotPosTop - parentPosTop) + '<' + -tipHeigth);
                     return 's';
                 } else {
-                    console.log((dotPosTop - parentPosTop) + '>' + -tipHeigth);
+                    // console.log((dotPosTop - parentPosTop) + '>' + -tipHeigth);
                     return 'n';
                 }
             });
@@ -327,8 +327,9 @@
         };
 
         let zoom = d3.zoom()
-            .scaleExtent([1, 40])
-            .translateExtent([[-100, -100], [width + 90, height + 100]])
+            .scaleExtent([1, 40])// 40 - максимальное количество раз, в которое можно увеличить, 1 - минимальное
+            .translateExtent([[0, 0], [width, height]])
+            .extent([[0, 0], [width, height]])
             .on('zoom', zoomed);
 
         function zoomed() {
@@ -370,9 +371,9 @@
         buildArea();
 
         if (typeChart !== 'accumulatorChart') {
-            console.log('это НЕ аккумулятор');
+            // console.log('это НЕ аккумулятор');
         } else {
-            console.log('это аккумулятор');
+            // console.log('это аккумулятор');
         }
 
         svg.call(zoom.transform, d3.zoomIdentity);
