@@ -1,80 +1,45 @@
 // import * as d3 from 'd3';
 (function () {
-    let buildChart = function (data, typeChart, nameChart) {
 
-        let options, chartNodeClass;
-        let chart, area;
-        let rawData = data;
+    class LineChart {
+        constructor() {
+            // super();
 
-        switch (typeChart) {
-            case 'balanceChart':
-                options = {
-                    title: '',
-                    units: 'Р.',
-                    zoom: true,
-                    dots: true,
-                    axisX: true,
-                    tooltip: true
-                };
-                chartNodeClass = '.chart-balance';
-                break;
-            case 'accumulatorChart':
-                options = {
-                    zoom: false,
-                    dots: false,
-                    axisX: false,
-                    tooltip: false
-                };
-                switch (nameChart) {
-                    case 'traffic':
-                        options = {
-                            title: 'Трафик',
-                            units: 'Gb' // or Mb
-                        };
-                        chartNodeClass = '.chart-traffic';
-                        break;
-                    case 'minutes':
-                        options = {
-                            title: 'Минуты',
-                            units: 'мин.'
-                        };
-                        chartNodeClass = '.chart-minutes';
-                        break;
-                    case 'sms':
-                        options = {
-                            title: 'СМС',
-                            units: 'шт.'
-                        };
-                        chartNodeClass = '.chart-sms';
-                        break;
-                    default:
-                    // console.log('I don`t know 1!!!');
-                }
-                break;
-            default:
-            // console.log('I don`t know 2!!!');
+            this.root = document.body;
         }
 
+        notify(eventName, detail) {
+            this.dispatchEvent(new CustomEvent(eventName, {
+                bubbles: true,
+                composed: true,
+                detail: detail
+            }));
+        }
 
-        let baseNodeClass = chartNodeClass;
-        let baseNode = document.querySelector(baseNodeClass);
+        clearChart() {
+            //очистка старого графика если он был
+            this.baseNode.innerHTML = '';
 
-        //очистка старого графика если он был
-        baseNode.innerHTML = '';
+        }
 
-        let baseNodeWidth = parseInt(window.getComputedStyle(baseNode).width);
-        let baseNodeHeigth = parseInt(window.getComputedStyle(baseNode).height);
+        calcDimensions() {
+            this.baseNodeWidth = parseInt(window.getComputedStyle(this.baseNode).width);
+            this.baseNodeHeigth = parseInt(window.getComputedStyle(this.baseNode).height);
 
-        let margin = {top: 20, right: 100, bottom: 30, left: 100};
-        let width = baseNodeWidth - margin.left - margin.right;
-        let height = baseNodeHeigth - margin.top - margin.bottom;
+            this.margin = {top: 20, right: 20, bottom: 30, left: 100};
+            this.width = this.baseNodeWidth - this.margin.left - this.margin.right;
+            this.height = this.baseNodeHeigth - this.margin.top - this.margin.bottom;
+        }
 
-        let parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%SZ");
+        preBuild(data) {
+            this.rawData = data;
+            this.parseTime = d3.utcParse("%Y-%m-%dT%H:%M:%S.%LZ");
+        }
 
-        let dataset1 = [];
-        let prepareDataIn = function (dataIn) {
-            dataIn.forEach(function (item) {
-                // console.log('newProcessDate', newProcessDate);//TODO время на 3 часа больше исходного - разобраться
+        prepareDataIn(dataIn) {
+            this.dataset1 = [];// dataset1 вроде вообще нужен только для графика типа Баланс, точнее где есть тултип
+
+            dataIn.forEach((item)=>{
 
                 let monthNameFormat = d3.timeFormat("%d.%m.%y, %H:%M");
                 let eventStartDate = monthNameFormat(new Date(item.eventStartDate));
@@ -83,8 +48,8 @@
 
                 // TODO добавить словарь (?) для metricUnit
 
-                dataset1.push({
-                    x: parseTime(item.processDate),
+                this.dataset1.push({
+                    x: this.parseTime(item.processDate),
                     y: item.balance,
                     eventStartDate: eventStartDate,
                     eventFinishDate: eventFinishDate,
@@ -97,108 +62,141 @@
                 });
             });
 
-            let yMin, yMax;
-            dataset1 = dataset1.sort(function (a, b) {
-                yMin = a;
-                yMin = a;
-                // console.log(yMin);
-                // console.log(yMin);
+            this.dataset1 = this.dataset1.sort((a, b) => {
                 return new Date(a.x) - new Date(b.x);
             });
-        };
-        prepareDataIn(rawData);
+        }
 
-        let minValY, maxValY, minValX, maxValX, minY, maxY;
-        let prepareDataAxis = function () {
-            minValY = d3.min(dataset1, function (d) {//интервал значений по оси Y
-                return minY = d.y;
+        getYMin() {
+            return d3.min(this.dataset1, (d) => {
+                return d.y;
             });
-            maxValY = d3.max(dataset1, function (d) {//интервал значений по оси Y
-                return maxY = d.y;
+        }
+
+        getYMax() {
+            return d3.max(this.dataset1, (d) => {
+                return d.y;
             });
-            minValX = d3.min(dataset1, function (d) {//интервал значений по оси X
-                return d.x;
+        }
+
+        yInitialValueMax() {
+            return d3.max(this.rawData, (d) => {
+                return d.initialValue;
             });
-            maxValX = d3.max(dataset1, function (d) {//интервал значений по оси X
-                return d.x;
-            });
-            dataset1.unshift({x: minValX, y: minValY, disabled: true});//TODO !!! вместо minValX раньше был 0. minValX делает чтобы пр большом зуме не пропадала область, но тогда появляется сдвиг
-            dataset1.push({x: maxValX, y: minValY, disabled: true});
-        };
+        }
 
+        kPadding() {
+            let yMin = this.getYMin();
+            let yMax = this.getYMax();
+            return (yMax - yMin) / 10; // коэффициент для запаса по Y
+        }
 
-        let xScale = d3.scaleTime()
-            .domain(d3.extent(dataset1, function (d) {
-                return d.x;
-            }))
-            .range([0, width]);// растянуть по ширине всей свг X и оси и график и всё
+        buildXScale(){
+             return d3.scaleTime()
+                .domain(d3.extent(this.dataset1, (d) => {
+                    return d.x;
+                }))
+                .range([0, this.width]);// растянуть по ширине всей свг X и оси и график и всё
+        }
 
-        let kPadding;// коэффициент для запаса по Y
-        kPadding = (d3.max(dataset1, function (d) {
-                return d.y
-            }) - d3.min(dataset1, function (d) {
-                return d.y
-            })) / 10;
-        // console.log('коэфф. = ', kPadding);
-        let yScale = d3.scaleLinear()
-            .domain([
-                d3.min(dataset1, function (d) {
-                    return d.y - kPadding;
-                }),
-                d3.max(dataset1, function (d) {
-                    return d.y + kPadding;
-                })])
-            .range([height, 0]);
+        buildYScale(){
+            return d3.scaleLinear()
+                .domain([
+                    d3.min(this.dataset1, (d) => {
+                        return d.y - this.kPadding();
+                    }),
+                    d3.max(this.dataset1, (d) => {
+                        // if (options.type === 'accumulatorChart') { // для аккумуляторов веррхняя граница по У - это макс-е из d.y и d.initialValue
+                        if (this.getYMax() > this.yInitialValueMax()) {
+                            return this.getYMax() + this.kPadding();
+                        } else {
+                            return this.yInitialValueMax() + this.kPadding();
+                        }
+                        // } else {
+                        //     return this.getYMax() + this.kPadding();
+                        // }
+                    })])
+                .range([this.height, 0]);
+        }
 
-        let xAxis = d3.axisBottom()
-            .scale(xScale)
-            .tickSizeInner(0)// раньше было значение -height. 0 скрывает вертикальные линии
-            .tickSizeOuter(0)
-            .tickFormat(d3.timeFormat("%d.%m"))
-            .tickPadding(15);// отступ значений от оси Х
+        buildXAxis(){
+            return d3.axisBottom()
+                .scale(this.xScale)
+                .tickSizeInner(0)// раньше было значение -height. 0 скрывает вертикальные линии
+                .tickSizeOuter(0)
+                .tickFormat(d3.timeFormat("%d.%m"))
+                .tickPadding(15);// отступ значений от оси Х
+        }
 
-        let yAxis = d3.axisLeft()
-            .ticks(10)//разбиение, то есть какой интервал между двумя осями
-            .scale(yScale)
-            .tickSizeInner(-width)// отображение горизонтальных линий вправо от оси У
-            .tickSizeOuter(0)// не понимаю на что влияет
-            .tickPadding(25);// отступ слева до тиков от левой оси
+        buildYAxis(){ // return undefind :(
+            return d3.axisLeft()
+                .ticks(10)//разбиение, то есть какой интервал между двумя осями
+                .scale(this.yScale)
+                .tickSizeInner(-this.width)// отображение горизонтальных линий вправо от оси У
+                .tickSizeOuter(0)// не понимаю на что влияет
+                .tickPadding(25);// отступ слева до тиков от левой оси
+        }
 
-        let line = d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
-            .x(function (d) {
-                return xScale(d.x);
-            })
-            .y(function (d) {
-                return yScale(d.y);
-            });
+        buildOsX() {
+            // вертикальные линии сетки, кроме первой и ось Х
 
-        let svg = d3.select(baseNodeClass).append('svg')
-            .attr('class', 'main-chart')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');// устанавливает позицию отображения свг
+            this.gX = this.svg.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + this.height + ')')
+                .call(this.xAxis);
+        }
 
+        buildOsY() {
+            // горизонтальные линии сетки, кроме первой и ось У
+            this.gY = this.svg.append('g')
+                .attr('class', 'y axis')
+                .call(this.yAxis);
+        }
 
-        let svgDefs = svg.append('defs');
+        buildLine() {
+            return d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
+                .x((d) => {
+                    return this.xScale(d.x);
+                })
+                .y((d) => {
+                    return this.yScale(d.y);
+                });
+        }
 
-        let svgBackground = svg.append('rect')
-            .attr('class', 'background')
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('width', width)
-            .attr('height', height)
-            .attr('pointer-events', 'all')
-            .attr('fill', '#fff');
+        buildSvg() {
+            return d3.select(this.root).select(this.baseNodeClass).append('svg')
+                .attr('class', 'main-chart')
+                .attr('width', this.width + this.margin.left + this.margin.right)
+                .attr('height', this.height + this.margin.top + this.margin.bottom)
+                .append('g')
+                .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');// устанавливает позицию отображения свг
+        }
 
-        let mainGradient = svgDefs.append('linearGradient')
-            .attr('id', 'mainGradient')
-            .attr('x1', '0')
-            .attr('x2', '0')
-            .attr('y1', '0')
-            .attr('y2', '1');
+        addBackground() {
+            this.svg.append('rect')
+                .attr('class', 'background')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', this.width)
+                .attr('height', this.height)
+                .attr('pointer-events', 'all')
+                .attr('fill-opacity', 0)
+                .attr('fill', '#fff');
+        }
 
-        function tooltipInner(d) {
+        getYZeroValue() {
+            d3.scaleLinear()
+                .domain([
+                    d3.min(this.dataset1, (d) => {
+                        return d.y - this.kPadding();
+                    }),
+                    d3.max(this.dataset1, (d) => {
+                        return d.y + this.kPadding();
+                    })])
+                .range([100, 0]);
+        }
+
+        tooltipInner(d) {
             return `<div class='tooltip-inner'>
 					<div class='tooltip_date'>${d.processDate}</div>
 					<div class='tooltip_title'>Добавлена услуга "${d.eventName}" - ${d.cost} Р/мес.</div>
@@ -209,81 +207,102 @@
 					<div class='tooltip_time'>${d.amount} м.</div>
 					<div class='tooltip_balance'>Баланс:
 						<span>${d.balance}</span> Р
-					</div> 
+					</div>
 				</div>`;
         }
 
-        mainGradient.append('stop')
-            .attr('class', 'stop-left')
-            .attr('offset', '0');
-        mainGradient.append('stop')
-            .attr('class', 'stop-right')
-            .attr('offset', '1');
+        createTip() {
+            let self = this;
+            this.tipId = 'tip' + Date.now();
+            this.tip = d3.tip()
+                .attr('id', this.tipId)
+                .attr('class', 'd3-tip tooltip')
+                .html((d) => {
+                    return this.tooltipInner(d);
+                })
+                .offset([-10, 0])
+                .direction(() => {//TODO в первой итерации высота тултипа неправильно считается
+                    let tipNode = document.querySelector('#' + this.tipId);
+                    let tipHeigth = tipNode.getBoundingClientRect().top - tipNode.getBoundingClientRect().bottom;
+                    let parentPosTop = self.root.closest('.main-chart g').getBoundingClientRect().top;
+                    let dotPosTop = self.root.getBoundingClientRect().top;
 
-        let tipId = 'tip' + Date.now();
-        let tip = d3.tip()
-            .attr('id', tipId)
-            .attr('class', 'd3-tip tooltip')
-            .html(function (d) {
-                return tooltipInner(d);
-            })
-            .offset([-10, 0])
-            .direction(function (d) {//TODO в первой итерации высота тултипа неправильно считается
-                let tipNode = document.querySelector('#' + tipId);
-                let tipHeigth = tipNode.getBoundingClientRect().top - tipNode.getBoundingClientRect().bottom;
-                let parentPosTop = this.closest('.main-chart g').getBoundingClientRect().top;
-                let dotPosTop = this.getBoundingClientRect().top;
+                    if ((dotPosTop - parentPosTop) < -tipHeigth) {
+                        // console.log((dotPosTop - parentPosTop) + '<' + -tipHeigth);
+                        return 's';
+                    } else {
+                        // console.log((dotPosTop - parentPosTop) + '>' + -tipHeigth);
+                        return 'n';
+                    }
+                });
 
-                if ((dotPosTop - parentPosTop) < -tipHeigth) {
-                    // console.log((dotPosTop - parentPosTop) + '<' + -tipHeigth);
-                    return 's';
-                } else {
-                    // console.log((dotPosTop - parentPosTop) + '>' + -tipHeigth);
-                    return 'n';
-                }
+            this.svg.call(this.tip);
+        }
+
+        prepareDataAxis() {
+            this.minValY = d3.min(this.dataset1, (d) => {//интервал значений по оси Y
+                return this.minY = d.y;
             });
+            this.maxValY = d3.max(this.dataset1, (d) => {//интервал значений по оси Y
+                return this.maxY = d.y;
+            });
+            this.minValX = d3.min(this.dataset1, (d) => {//интервал значений по оси X
+                return d.x;
+            });
+            this.maxValX = d3.max(this.dataset1, (d) => {//интервал значений по оси X
+                return d.x;
+            });
+            this.dataset1.unshift({x: this.minValX, y: this.minValY - this.kPadding(), disabled: true});
+            this.dataset1.push({x: this.maxValX, y: this.minValY - this.kPadding(), disabled: true});
+        }
 
-        svg.call(tip);
+        buildArea() {
+            // график, в смысле залитая область
+            let viewBoxSize = '0 0' + ' ' + this.width + ' ' + this.height;//TODO некрасиво написано
 
-
-        let gY, gX;
-        // вертикальные линии сетки, кроме первой и ось Х
-        let buildOsX = function () {
-
-            gX = svg.append('g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + height + ')')
-                .call(xAxis);
-        };
-
-        // горизонтальные линии сетки, кроме первой и ось У
-        let buildOsY = function () {
-            gY = svg.append('g')
-                .attr('class', 'y axis')
-                .call(yAxis);
-
-            d3.selectAll('g.tick').each(function (d) {
-                if (d === 0) {
-                    this.classList.add('zero-tick');
-                }
-            })
-
-        };
-
-        // график в точках
-        let buildChart = function () {
-            let viewBoxSize = '0 0' + ' ' + width + ' ' + height;//TODO некрасиво написано
-
-            chart = svg
+            this.area = this.svg
                 .append('svg')
                 .attr('class', 'svg-chart-area')
                 .attr('viewBox', viewBoxSize)
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', width)
-                .attr('height', height)
+                .attr('width', this.width)
+                .attr('height', this.height)
+
+                // .selectAll('svg')
+                .append('path')
+                .data([this.dataset1])
+                .attr('class', 'filled')
+                .attr('fill', '#000')
+                .attr('d', this.line);
+
+        }
+
+        maxValueLine() { // красная линия (график) - критическое значение по аккумуляторам
+
+            let maxLine = this.svg
+                .append('g')
+                .attr('class', 'maxLine')
+                .append('polyline')
+                .data([this.rawData])
+                .attr('points', (d) => {
+                    return d.map((d) => {
+                        let monthNameFormat = d3.timeFormat("%d.%m.%y, %H:%M");
+                        let processDate = monthNameFormat(new Date(d.processDate));
+                        return [this.xScale(parseTime(d.processDate)), this.yScale(d.initialValue)].join(",");
+                    }).join(" ");
+                })
+                .attr('fill', 'none')
+                .attr('stroke', 'red');
+        }
+
+        buildChartDots () {
+            // график в точках
+
+            this.chart = this.svg
+                .selectAll('svg')
                 .selectAll('.dot')
-                .data(dataset1.filter(function (item) {
+                .data(this.dataset1.filter((item) => {
                     return !item.disabled;
                 }))
                 .enter()
@@ -293,329 +312,324 @@
                 .attr('stroke', '#12aaeb')
                 .attr('stroke-width', '5')
                 .attr('fill', '#fff')
-                .attr('cx', function (d) {
-                    return xScale(d.x);
+                .attr('cx', (d) => {
+                    return this.xScale(d.x);
                 })
-                .attr('cy', function (d) {
-                    return yScale(d.y);
+                .attr('cy', (d) => {
+                    return this.yScale(d.y);
                 })
-                .on('mouseenter', tip.show)
-                .on('mouseout', tip.hide);
+                // .on('mouseenter', this.tip.show)
+                // .on('mouseout', this.tip.hide);
 
-            svg.selectAll('.dot').each(function (d) {
+            let self = this;
+            this.svg.selectAll('.dot').each((d) => {
                 if (d.y < 0) {
-                    this.setAttribute('stroke', 'red');
+                    self.setAttribute('stroke', 'red');
                 }
             });
-        };
+        }
 
-        // график, в смысле залитая область
-        let buildArea = function () {
-            area = svg.selectAll('svg')
-                .append('path')
-                .data([dataset1])
-                .attr('class', 'filled')
-                .attr('fill', '#000')
-                .attr('d', line);
+        addAccumulatorLegend() {
+            let legendAccum = this.svg
+                .append('g')
+                .attr('transform', 'translate(0,-20)')
+                .attr('class', 'legend');
 
-            // .transition() // Анимация. Wait one second. Then brown, and remove.
-            //     .ease(d3.easeElastic)
-            //     .delay(1000)
-            //     .style("fill", "brown");
-            // .remove();
+            let legendPadTop = 10;
 
-        };
+            legendAccum.append('text')
+                .text(() =>{
+                    return options.title;
+                })
+                .attr('class', 'legend-title')
+                .attr('fill', '#546e7a')
+                .attr('style', 'font-weight: 500;')
+                .attr('dy', legendPadTop);
 
-        let zoom = d3.zoom()
-            .scaleExtent([1, 40])// 40 - максимальное количество раз, в которое можно увеличить, 1 - минимальное
-            .translateExtent([[0, 0], [width, height]])
-            .extent([[0, 0], [width, height]])
-            .on('zoom', zoomed);
+            let legendTitle = this.svg.selectAll('.legend-title');
+            // let legendTitleWidth = parseInt(legendTitle.style("width"));
+            let legendTitleWidth = this.svg.selectAll('.legend-title')._groups[0][0].scrollWidth;// !! потому что в ie11 .clientWidth = 0
+            let countItem = '3,57 Gb';
+            let countTime = '10 дней';
+            let legendInnerText = ' - осталось ' + countItem + ' на ' + countTime;
 
-        function zoomed() {
+            legendAccum.append('text')
+                .text(() => {
+                    return legendInnerText;
+                })
+                .attr('fill', '#9e9e9e')
+                .attr('dy', legendPadTop)
+                .attr('dx', legendTitleWidth + 7);
+        }
 
+        buildZoom() {
+            let zoomed = this.zoomed.bind(this);
+
+             return d3.zoom()
+                .scaleExtent([1, 50]) // 50 - максимальное количество раз, в которое можно увеличить, 1 - минимальное
+                .translateExtent([[0, 0], [this.width, this.height]])
+                .extent([[0, 0], [this.width, this.height]])
+                .on('zoom', zoomed);
+        }
+
+        zoomed() {
+            console.log(this);
             let transform = d3.event.transform;
 
-            gX.call(xAxis.scale(transform.rescaleX(xScale)));
-            // gY.call(yAxis.scale(transform.rescaleY(yScale)));//не зумить ось Y
-            // gY.call(yAxis.scale(yScale));//не зумить ось Y
+            this.gX.call(this.xAxis.scale(transform.rescaleX(this.xScale)));
+            // this.gY.call(this.yAxis().scale(transform.rescaleY(this.yScale())));//не зумить ось Y
+            // this.gY.call(this.yAxis().scale(this.yScale()));//не зумить ось Y
 
             // после перерисовки осей, получаем новые данные и перестраиваем график - chart и line
 
-            chart
-                .attr('cx', function (d) {
-                    return transform.applyX(xScale(d.x));
+            this.chart
+                .attr('cx', (d) => {
+                    return transform.applyX(this.xScale(d.x));
                 })
-                .attr('cy', function (d) {
-                    // return transform.applyY(yScale(d.y));//чтобы зумилось и по оси Y
-                    return yScale(d.y);//чтобы не зумилось по оси  Y
+                .attr('cy', (d) => {
+                    // return transform.applyY(this.yScale(d.y));//чтобы зумилось и по оси Y
+                    return this.yScale(d.y);//чтобы не зумилось по оси  Y
                 });
 
 
-            let line = d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
-                .x(function (d) {
-                    return transform.applyX(xScale(d.x));
+             let line = d3.line()// на выходе строка типа  M0,327.27272727272725L0,286.3636363636364L23.75, ...
+                .x((d) => {
+                    return transform.applyX(this.xScale(d.x));
                 })
-                .y(function (d) {
+                .y((d) => {
                     // return transform.applyY(yScale(d.y));//чтобы зумилось и по оси Y
-                    return yScale(d.y);//чтобы не зумилось по оси  Y
+                    return this.yScale(d.y);//чтобы не зумилось по оси  Y
                 });
 
-            area.attr('d', line);
+            this.area.attr('d', line);
         }
 
-        prepareDataAxis();
-        buildOsX();
-        buildOsY();
-        buildChart();
-        buildArea();
-
-        if (typeChart !== 'accumulatorChart') {
-            // console.log('это НЕ аккумулятор');
-        } else {
-            // console.log('это аккумулятор');
-        }
-
-        svg.call(zoom.transform, d3.zoomIdentity);
-        svg.call(zoom);
-
-        return {
-            destroy: function () {
-                let tip = document.querySelector('#' + tipId);
-
-                if (tip) {
-                    tip.parentNode.removeChild(tip);
-                }
-                baseNode.innerHTML = '';
+        destroy() {
+            this.tip = document.querySelector('#' + this.tipId);
+            if (this.tip) {
+                this.tip.parentNode.removeChild(this.tip);
             }
-        };
-
-    };
-
-    let dataTraffic = [{
-        "counterName": "Ultra3700",
-        "changes": [{
-            "processDate": "2017-03-10T08:33:43Z",
-            "initialValue": 100,
-            "amount": 3,
-            "balance": 20,
-        }, {
-            "processDate": "2017-03-10T08:49:43Z",
-            "initialValue": 100,
-            "amount": 2,
-            "balance": 22,
-        }, {
-            "processDate": "2017-03-10T14:29:43Z",
-            "initialValue": 100,
-            "amount": 6,
-            "balance": 28,
-        }, {
-            "processDate": "2017-03-11T12:09:43Z",
-            "initialValue": 100,
-            "amount": 4,
-            "balance": 32,
-        }, {
-            "processDate": "2017-03-11T14:57:43Z",
-            "initialValue": 100,
-            "amount": 1,
-            "balance": 33,
-        }, {
-            "processDate": "2017-03-11T16:54:43Z",
-            "initialValue": 100,
-            "amount": 10,
-            "balance": 43,
-        }, {
-            "processDate": "2017-03-12T11:14:43Z",
-            "initialValue": 100,
-            "amount": 6,
-            "balance": 49,
-        }, {
-            "processDate": "2017-03-12T11:15:43Z",
-            "initialValue": 100,
-            "amount": 2,
-            "balance": 51,
+            this.baseNode.innerHTML = '';
         }
-        ]
-    }];
 
-    let dataBalance = [{
-        "eventStartDate": "2017-03-10T08:32:43Z",
-        "eventFinishDate": "2017-03-10T08:34:43Z",
-        "processDate": "2017-03-10T08:47:43Z",
-        "eventName": "0 Связь. Исходящая (_Сотовые операторы)",
-        "amount": 20,
-        "metricUnit": 4,
-        "cost": 3,
-        "balance": 3115.55
-    }, {
-        "eventStartDate": "2017-03-10T12:06:49Z",
-        "eventFinishDate": "2017-03-10T12:06:49Z",
-        "processDate": "2017-03-10T12:08:49Z",
-        "eventName": "1 Пополнение баланса",
-        "amount": 1,
-        "metricUnit": 1,
-        "cost": 100,
-        "balance": 3215.55
-    }, {
-        "eventStartDate": "2017-03-10T21:31:14Z",
-        "eventFinishDate": "2017-03-10T21:30:54Z",
-        "processDate": "2017-03-10T21:36:49Z",
-        "eventName": "2 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 9,
-        "metricUnit": 4,
-        "cost": 2.50,
-        "balance": 3213.05
-    }, {
-        "eventStartDate": "2017-03-10T06:15:24Z",
-        "eventFinishDate": "2017-03-10T06:30:54Z",
-        "processDate": "2017-03-10T06:30:49Z",
-        "eventName": "3 Связь. Входящая (_Сотовые операторы)",
-        "amount": 15,
-        "metricUnit": 4,
-        "cost": 0,
-        "balance": 3213.05
-    }, {
-        "eventStartDate": "2017-03-10T06:30:24Z",
-        "eventFinishDate": "2017-03-10T06:31:54Z",
-        "processDate": "2017-03-10T06:31:49Z",
-        "eventName": "4 Связь. Входящая (_Сотовые операторы)",
-        "amount": 1,
-        "metricUnit": 4,
-        "cost": 0,
-        "balance": 3213.05
-    }, {
-        "eventStartDate": "2017-03-10T10:53:59Z",
-        "eventFinishDate": "2017-03-10T10:53:59Z",
-        "processDate": "2017-03-10T10:53:49Z",
-        "eventName": "5 Пополнение баланса",
-        "amount": 1,
-        "metricUnit": 1,
-        "cost": 50,
-        "balance": 3255.55
-    }, {
-        "eventStartDate": "2017-03-10T10:55:59Z",
-        "eventFinishDate": "2017-03-10T10:57:49Z",
-        "processDate": "2017-03-10T10:57:49Z",
-        "eventName": "6 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 2,
-        "metricUnit": 4,
-        "cost": 6.50,
-        "balance": 3206.55
-    }, {
-        "eventStartDate": "2017-03-10T16:05:54Z",
-        "eventFinishDate": "2017-03-10T16:07:49Z",
-        "processDate": "2017-03-10T16:08:49Z",
-        "eventName": "7 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 4,
-        "metricUnit": 4,
-        "cost": 4.90,
-        "balance": 3204.12
-    }, {
-        "eventStartDate": "2017-03-10T23:05:54Z",
-        "eventFinishDate": "2017-03-10T23:05:59Z",
-        "processDate": "2017-03-10T23:05:49Z",
-        "eventName": "8 SMS. Исходящая",
-        "amount": 1,
-        "metricUnit": 4,
-        "cost": 3,
-        "balance": 3201.12
-    }, {
-        "eventStartDate": "2017-03-11T00:01:59Z",
-        "eventFinishDate": "2017-03-11T00:01:59Z",
-        "processDate": "2017-03-11T00:02:59Z",
-        "eventName": "9 SMS. Входящая",
-        "amount": 1,
-        "metricUnit": 4,
-        "cost": 0,
-        "balance": 3201.12
-    }, {
-        "eventStartDate": "2017-03-11T01:06:54Z",
-        "eventFinishDate": "2017-03-11T01:12:54Z",
-        "processDate": "2017-03-11T01:13:49Z",
-        "eventName": "10 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 6,
-        "metricUnit": 4,
-        "cost": 5,
-        "balance": 3199.12
-    }, {
-        "eventStartDate": "2017-03-11T14:32:54Z",
-        "eventFinishDate": "2017-03-11T14:32:54Z",
-        "processDate": "2017-03-11T14:32:49Z",
-        "eventName": "11 Пополнение баланса",
-        "amount": 1,
-        "metricUnit": 1,
-        "cost": 25,
-        "balance": 3224.12
-    }, {
-        "eventStartDate": "2017-03-11T16:57:54Z",
-        "eventFinishDate": "2017-03-11T17:19:54Z",
-        "processDate": "2017-03-11T17:19:49Z",
-        "eventName": "12 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 22,
-        "metricUnit": 4,
-        "cost": 87,
-        "balance": 3137.12
-    }, {
-        "eventStartDate": "2017-03-11T20:07:54Z",
-        "eventFinishDate": "2017-03-11T21:57:54Z",
-        "processDate": "2017-03-11T17:19:59Z",
-        "eventName": "13 GPRS",
-        "amount": 114,
-        "metricUnit": 4,
-        "cost": 3601.14,
-        "balance": -464.02
-    }, {
-        "eventStartDate": "2017-03-11T22:09:54Z",
-        "eventFinishDate": "2017-03-11T22:12:54Z",
-        "processDate": "2017-03-11T22:13:54Z",
-        "eventName": "14 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 4,
-        "metricUnit": 4,
-        "cost": 17.4,
-        "balance": -481.42
-    }, {
-        "eventStartDate": "2017-03-11T22:34:54Z",
-        "eventFinishDate": "2017-03-11T22:36:54Z",
-        "processDate": "2017-03-11T22:36:59Z",
-        "eventName": "15 Связь. Исходящая (_Международная, СНГ)",
-        "amount": 2,
-        "metricUnit": 4,
-        "cost": 7.3,
-        "balance": -488.72
-    }, {
-        "eventStartDate": "2017-03-12T10:32:54Z",
-        "eventFinishDate": "2017-03-12T10:32:54Z",
-        "processDate": "2017-03-12T10:32:54Z",
-        "eventName": "16 Пополнение баланса",
-        "amount": 1,
-        "metricUnit": 1,
-        "cost": 500,
-        "balance": 11.28
-    }, {
-        "eventStartDate": "2017-03-12T11:03:54Z",
-        "eventFinishDate": "2017-03-12T11:10:54Z",
-        "processDate": "2017-03-12T11:10:54Z",
-        "eventName": "17 - Связь. Входящая (_Сотовые операторы)",
-        "amount": 2,
-        "metricUnit": 4,
-        "cost": 1.3,
-        "balance": 9.98
-    }];
+    }
 
-    // buildChart(dataTraffic, 'accumulatorChart', 'traffic');
-    let balanceChart = buildChart(dataBalance, 'balanceChart');
-    let minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
-    let smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
+    class BalanceChart extends LineChart {
+        constructor(data) {
+            super();
+            // this.appendChild(template.content.cloneNode(true));
+
+            let buildChartResult = this.buildChart(data);
+
+            window.addEventListener('resize', () => {
+                buildChartResult.destroy();
+                this.buildChart(data);
+            });
+        }
+
+        addBackground() {
+            this.svg.append('rect')
+                .attr('class', 'background')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', this.width)
+                .attr('height', this.height)
+                .attr('pointer-events', 'all')
+                .attr('fill-opacity', 0)
+                .attr('fill', '#fff');
+        }
+
+        setGradient(zeroValueColor) {
+            let svgDefs = this.svg.append('defs');
+
+            let mainGradient = svgDefs.append('linearGradient')
+                .attr('id', 'mainGradient')
+                .attr('x1', '0')
+                .attr('x2', '0')
+                .attr('y1', '0')
+                .attr('y2', '1');
+
+            zeroValueColor = 0;//TODO убрать эту строку потом
+            mainGradient.append('stop')
+                .attr('class', 'stop-top')
+                .attr('offset', '0');
+            mainGradient.append('stop')
+                .attr('class', 'stop-center')
+                .attr('offset', zeroValueColor + '%');
+            mainGradient.append('stop')
+                .attr('class', 'stop-bottom-balance')
+                .attr('offset', '1');
+        }
+
+        buildChart(data) {
+
+            this.chartNodeClass = '.chart-area';
+            this.baseNodeClass = this.chartNodeClass;
+            this.baseNode = this.root.querySelector(this.baseNodeClass);
 
 
-    window.onresize = function (event) {
-        balanceChart.destroy();
-        minutesChart.destroy();
-        smsChart.destroy();
+            this.clearChart();
+            this.calcDimensions();
+            this.preBuild(data);
 
-        balanceChart = buildChart(dataBalance, 'balanceChart');
-        minutesChart = buildChart(dataBalance, 'accumulatorChart', 'minutes');
-        smsChart = buildChart(dataBalance, 'accumulatorChart', 'sms');
+            this.prepareDataIn(this.rawData);
+
+            this.xScale = this.buildXScale();
+            this.yScale = this.buildYScale();
+            this.xAxis = this.buildXAxis();
+            this.yAxis = this.buildYAxis();
+
+            // this.xScale();//TODO возможно не надо их явно вызывать, они передаются в xAxis и line
+            // this.yScale();//TODO возможно не надо их явно вызывать, они передаются в yAxis и line
+
+            // this.xAxis();//TODO возможно не надо их явно вызывать, они передаются в buildOsX и zoom
+            // this.yAxis();//TODO возможно не надо их явно вызывать, они передаются в buildOsY и zoom
+
+            // this.line();//TODO возможно не надо явно вызывать, передается в buildArea и zoom
+            this.line = this.buildLine();
+
+            this.svg = this.buildSvg();
+            this.addBackground();
+            // this.getYZeroValue();// TODO возможно надо разкоментить
+            this.setGradient(this.getYZeroValue(0));
+            // this.createTip();
+
+            this.buildOsX();
+            this.buildOsY();
+
+            this.prepareDataAxis();
+            this.buildArea();
+            this.buildChartDots();
+
+            this.zoom = this.buildZoom();
+            this.svg.call(this.zoom.transform, d3.zoomIdentity);
+            this.svg.call(this.zoom);
+        }
+    }
+
+    let data = [
+        {
+            "amount": 0,
+            "cost": null,
+            "balance": 5260.0283,
+            "processDate": "2017-04-25T06:39:26.000Z",
+            "eventName": "Регистрация платежа",
+            "eventTypeName": "Прочее",
+            "eventFinishDate": "2017-04-25T06:39:24.000Z",
+            "eventType": "Прочее",
+            "metricUnitName": "не определено",
+            "eventStartDate": "2017-04-25T06:39:24.000Z",
+            "initialValue": 5200,
+            "metricUnit": "0"
+        },
+        {
+            "amount": 0,
+            "cost": null,
+            "balance": 3793.422,
+            "processDate": "2017-04-21T13:26:15.000Z",
+            "eventName": "Регистрация платежа",
+            "eventTypeName": "Прочее",
+            "eventFinishDate": "2017-04-21T13:26:15.000Z",
+            "eventType": "Прочее",
+            "metricUnitName": "не определено",
+            "eventStartDate": "2017-04-21T13:26:15.000Z",
+            "initialValue": 5200,
+            "metricUnit": "0"
+        }, {
+            "amount": 0,
+            "cost": null,
+            "balance": 2682.839663,
+            "processDate": "2017-04-21T11:08:12.000Z",
+            "eventName": "Запрос баланса (Муравьева Елена )",
+            "eventTypeName": "Прочее",
+            "eventFinishDate": "2017-04-21T11:08:12.000Z",
+            "eventType": "Прочее",
+            "metricUnitName": "не определено",
+            "eventStartDate": "2017-04-21T11:08:12.000Z",
+            "initialValue": 5200,
+            "metricUnit": "0"
+        }, {
+            "amount": 0,
+            "cost": null,
+            "balance": 10000,
+            "processDate": "2017-04-13T11:25:00.000Z",
+            "eventName": "Регистрация платежа",
+            "eventTypeName": "Прочее",
+            "eventFinishDate": "2017-04-13T11:24:59.000Z",
+            "eventType": "Прочее",
+            "metricUnitName": "не определено",
+            "eventStartDate": "2017-04-13T11:24:59.000Z",
+            "initialValue": 5200,
+            "metricUnit": "0"
+        },
+        {
+            "amount": 0,
+            "cost": 11.8,
+            "balance": 9953.6614,
+            "processDate": "2017-01-27T14:45:33.000Z",
+            "eventName": "Продажа SIM карты",
+            "eventTypeName": "Прочее",
+            "eventFinishDate": "2017-01-27T14:45:31.000Z",
+            "eventType": "Прочее",
+            "metricUnitName": "штука",
+            "eventStartDate": "2017-01-27T14:45:31.000Z",
+            "initialValue": 5200,
+            "metricUnit": "8"
+        },
+        {
+            "amount": 0,
+            "cost": 33.04,
+            "balance": 9965.4614,
+            "processDate": "2017-01-27T14:45:33.000Z",
+            "eventName": "Добавление услуги Переадресация вызова (периодическая)",
+            "eventTypeName": "Звонки",
+            "eventFinishDate": "2017-01-27T14:45:31.000Z",
+            "eventType": "calls",
+            "metricUnitName": "факт",
+            "eventStartDate": "2017-01-27T14:45:31.000Z",
+            "initialValue": 5200,
+            "metricUnit": "7"
+        },
+        {
+            "amount": 0,
+            "cost": 1.4986,
+            "balance": 9998.5014,
+            "processDate": "2017-01-27T14:45:33.000Z",
+            "eventName": "Добавление услуги Мобильный помощник",
+            "eventTypeName": "Интернет",
+            "eventFinishDate": "2017-01-27T14:45:31.000Z",
+            "eventType": "internet",
+            "metricUnitName": "факт",
+            "eventStartDate": "2017-01-27T14:45:31.000Z",
+            "initialValue": 5200,
+            "metricUnit": "7"
+        }
+
+    ];
+    let options1 = {
+        type: 'balanceChart',
+        zoom: true,
+        dots: true,
+        axisX: true,
+        tooltip: true,
+        title: '',
+        units: 'Р.'
     };
+
+    let options2 = {
+        type: 'accumulatorChart',
+        zoom: false,
+        dots: false,
+        axisX: false,
+        tooltip: false,
+        title: 'lsa;dk',
+        units: 'Р.'
+    };
+
+    let chart = new BalanceChart(data);
+
+    // buildChart(data, options1);
+    // buildChart(data, options2);
+
 
 })();
