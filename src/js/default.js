@@ -99,6 +99,24 @@
                 .range([0, this.width]);// растянуть по ширине всей свг X и оси и график и всё
         }
 
+        // if (options.type === 'accumulatorChart')
+  /*      buildYScale(){
+            return d3.scaleLinear()
+                .domain([
+                    d3.min(this.dataset1, (d) => {
+                        return d.y - this.kPadding();
+                    }),
+                    d3.max(this.dataset1, (d) => {
+                        if (this.getYMax() > this.yInitialValueMax()) {
+                            return this.getYMax() + this.kPadding();
+                        } else {
+                            return this.yInitialValueMax() + this.kPadding();
+                        }
+                    })])
+                .range([this.height, 0]);
+        }*/
+
+        // if (options.type === 'balanceChart')
         buildYScale(){
             return d3.scaleLinear()
                 .domain([
@@ -106,15 +124,7 @@
                         return d.y - this.kPadding();
                     }),
                     d3.max(this.dataset1, (d) => {
-                        // if (options.type === 'accumulatorChart') { // для аккумуляторов веррхняя граница по У - это макс-е из d.y и d.initialValue
-                        if (this.getYMax() > this.yInitialValueMax()) {
-                            return this.getYMax() + this.kPadding();
-                        } else {
-                            return this.yInitialValueMax() + this.kPadding();
-                        }
-                        // } else {
-                        //     return this.getYMax() + this.kPadding();
-                        // }
+                        return this.getYMax() + this.kPadding();
                     })])
                 .range([this.height, 0]);
         }
@@ -317,7 +327,7 @@
                 })
                 .attr('cy', (d) => {
                     return this.yScale(d.y);
-                })
+                });
                 // .on('mouseenter', this.tip.show)
                 // .on('mouseout', this.tip.hide);
 
@@ -373,7 +383,6 @@
         }
 
         zoomed() {
-            console.log(this);
             let transform = d3.event.transform;
 
             this.gX.call(this.xAxis.scale(transform.rescaleX(this.xScale)));
@@ -486,10 +495,11 @@
             // this.yAxis();//TODO возможно не надо их явно вызывать, они передаются в buildOsY и zoom
 
             // this.line();//TODO возможно не надо явно вызывать, передается в buildArea и zoom
-            this.line = this.buildLine();
 
+            this.line = this.buildLine();
             this.svg = this.buildSvg();
             this.addBackground();
+
             // this.getYZeroValue();// TODO возможно надо разкоментить
             this.setGradient(this.getYZeroValue(0));
             // this.createTip();
@@ -519,7 +529,7 @@
             "eventType": "Прочее",
             "metricUnitName": "не определено",
             "eventStartDate": "2017-04-25T06:39:24.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "0"
         },
         {
@@ -533,7 +543,7 @@
             "eventType": "Прочее",
             "metricUnitName": "не определено",
             "eventStartDate": "2017-04-21T13:26:15.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "0"
         }, {
             "amount": 0,
@@ -546,7 +556,7 @@
             "eventType": "Прочее",
             "metricUnitName": "не определено",
             "eventStartDate": "2017-04-21T11:08:12.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "0"
         }, {
             "amount": 0,
@@ -559,7 +569,7 @@
             "eventType": "Прочее",
             "metricUnitName": "не определено",
             "eventStartDate": "2017-04-13T11:24:59.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "0"
         },
         {
@@ -573,7 +583,7 @@
             "eventType": "Прочее",
             "metricUnitName": "штука",
             "eventStartDate": "2017-01-27T14:45:31.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "8"
         },
         {
@@ -587,7 +597,7 @@
             "eventType": "calls",
             "metricUnitName": "факт",
             "eventStartDate": "2017-01-27T14:45:31.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "7"
         },
         {
@@ -601,7 +611,7 @@
             "eventType": "internet",
             "metricUnitName": "факт",
             "eventStartDate": "2017-01-27T14:45:31.000Z",
-            "initialValue": 5200,
+            // "initialValue": 5200,
             "metricUnit": "7"
         }
 
